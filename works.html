@@ -62,6 +62,7 @@
       padding: 1rem;
       border-radius: 10px;
       transition: transform 0.3s;
+      text-align: left;
     }
     .book:hover { transform: translateY(-5px); }
 
@@ -73,23 +74,35 @@
       margin-bottom: 1rem;
       background: #555; /* fallback color */
     }
-    .book h3 {
-      font-size: 1.3rem !important;
-      margin-bottom: 0.5rem !important;
-      color: #ff9933 !important;
+
+    /* Book titles: always orange, header style */
+    .book h3,
+    .book h3 a,
+    .book h3 a:visited {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #ff9933;
+      text-decoration: none;
     }
+    .book h3 a:hover {
+      color: #ffaa00;
+    }
+
     .book p {
       margin: 0.3rem 0;
       color: #bbb;
       font-size: 0.95rem;
     }
 
-    a {
-      margin: 0.3rem 0;
+    /* Author links stay gray */
+    .book p a {
       color: #bbb;
-      font-size: 0.95rem;
+      text-decoration: underline;
     }
-    
+    .book p a:hover {
+      color: #ff6600;
+    }
+
     footer {
       padding: 2rem;
       background: #000;
@@ -118,9 +131,9 @@
       <!-- Book 1 -->
       <div class="book">
         <img src="lib/pictures/k-story-cover-book-1.png" alt="K-Story Cover">
-        <h3><a href="/works/k-story-book-1">K-Story: History and Songs of Korea</a></h3>
+        <h3><a href="/works/k-story-book-1.html">K-Story: History and Songs of Korea</a></h3>
         <p><em>Book 1: Ancient Kingdoms</em></p>
-        <p>By <a href="/authors/jun-hee-lee">Jun Hee Lee</a> and <a href="/authors/jaewon-lee">Jaewon Lee</a></p>
+        <p>By <a href="/authors/jun-hee-lee.html">Jun Hee Lee</a> and <a href="/authors/jaewon-lee.html">Jaewon Lee</a></p>
         <p><strong>Releasing November 24, 2025</strong></p>
       </div>
 
@@ -128,7 +141,7 @@
       <div class="book">
         <img src="lib/pictures/apple-cover.png" alt="Apple Cover">
         <h3>Apple</h3>
-        <p>By <a href="/authors/jaewon-lee">Jaewon Lee</a></p>
+        <p>By <a href="/authors/jaewon-lee.html">Jaewon Lee</a></p>
         <p><strong>Releasing October 15, 2025</strong></p>
       </div>
 
