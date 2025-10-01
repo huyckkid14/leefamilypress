@@ -12,70 +12,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Replace any header block
+        # Use a different delimiter like '#' instead of '|' to avoid conflicts
+        # with the pipes in the HTML (though you don't have them).
+        # We also remove many of the internal newlines and use '\n' explicitly
+        # where needed to make the shell string cleaner, though this is still tricky.
         run: |
-          find . -type f -name "*.html" -exec perl -0777 -pi -e '
-            my $new = <<'END_HEADER';
-<header>
-  <h1>Lee Family Press</h1>
-  <nav>
-    <a href="/index.html">Home</a>
-    <a href="/works.html">Works</a>
-    <a href="#contact">Contact</a>
-
-    <div class="dropdown">
-      <a href="#">Authors ▾</a>
-      <div class="dropdown-content">
-        <a href="/authors/jun-hee-lee.html">Jun Hee Lee</a>
-        <a href="/authors/jaewon-lee.html">Jaewon Lee</a>
-      </div>
-    </div>
-  </nav>
-</header>
-
-<style>
-/* Dropdown wrapper */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* Dropdown menu */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-
-/* Links inside dropdown */
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-
-/* Show dropdown on hover */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-END_HEADER
-            s|<header>.*?</header>|$new|gs;
-          ' {} +
+          find . -type f -name "*.html" -exec perl -0777 -pi -e "s#<header>.*?</header>#<header>\n <h1>Lee Family Press</h1>\n <nav>\n <a href=\"/index.html\">Home</a>\n <a href=\"/works.html\">Works</a>\n <a href=\"#contact\">Contact</a>\n <div class=\"dropdown\">\n <a href=\"#\">Authors ▾</a>\n <div class=\"dropdown-content\">\n <a href=\"/authors/jun-hee-lee.html\">Jun Hee Lee</a>\n <a href=\"/authors/jaewon-lee.html\">Jaewon Lee</a>\n </div>\n </div>\n </nav>\n</header>\n\n<style>\n/* Dropdown wrapper */\n.dropdown {\n position: relative;\n display: inline-block;\n}\n\n/* Dropdown menu */\n.dropdown-content {\n display: none;\n position: absolute;\n top: 100%;\n right: 0;\n left: auto;\n background: #222;\n padding: 0.5rem 0;\n border-radius: 6px;\n box-shadow: 0 4px 8px rgba(0,0,0,0.3);\n min-width: 180px;\n z-index: 1000;\n}\n\n/* Links inside dropdown */\n.dropdown-content a {\n display: block;\n padding: 0.5rem 1rem;\n color: #ddd;\n text-decoration: none;\n transition: background 0.3s, color 0.3s;\n}\n\n.dropdown-content a:hover {\n background: #333;\n color: #ff6600;\n}\n\n/* Show dropdown on hover */\n.dropdown:hover .dropdown-content {\n display: block;\n}\n</style>#gs" {} +
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
