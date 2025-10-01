@@ -1,0 +1,233 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Author: Jun Hee Lee - Lee Family Press</title>
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #f0f0f0;
+      background: #1c1c1c;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(45deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    nav a {
+      color: #ddd;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: #ff6600; }
+
+    .section {
+      padding: 6rem 2rem 4rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .author-profile {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    .author-profile img {
+      width: 220px;
+      height: 220px;   /* square for 1:1 ratio */
+      object-fit: cover;
+      border-radius: 8px;
+      background: #333;
+    }
+    .author-bio {
+      flex: 1;
+    }
+    .author-bio p a {
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    .works-list h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #ff9933;
+    }
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .book {
+      background: #222;
+      padding: 1rem;
+      border-radius: 10px;
+      transition: transform 0.3s;
+      text-align: center;
+    }
+    .book:hover {
+      transform: translateY(-5px);
+    }
+    .book img {
+      width: 50%;
+      aspect-ratio: 2 / 3; /* keeps 6x9 ratio */
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+    .book h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #ffcc66;
+    }
+    .book p {
+      margin: 0.3rem 0;
+      color: #bbb;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      padding: 2rem;
+      background: #000;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 3rem;
+    }
+    .book h4 a,
+.book h4 a:visited {
+  font-size: 1.2rem !important;
+  font-weight: bold;
+  color: #ffcc66 !important;  /* same as Apple */
+  text-decoration: none;      /* remove underline */
+}
+.book h4 a:hover {
+  color: #ffaa33 !important;  /* lighter orange on hover */
+}
+  </style>
+</head>
+<body>
+  <header>
+  <h1>Lee Family Press</h1>
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/works.html">Works</a>
+    <a href="#contact">Contact</a>
+
+    <div class="dropdown">
+      <a href="#">Authors ▾</a>
+      <div class="dropdown-content">
+        <a href="/authors/jun-hee-lee.html">Jun Hee Lee</a>
+        <a href="/authors/jaewon-lee.html">Jaewon Lee</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+/* Dropdown wrapper */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown menu */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;          /* keeps aligned with Authors link */
+  left: auto;        /* prevent sticking to page edge */
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+
+/* Links inside dropdown */
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+  <!-- Author Profile -->
+  <section class="section">
+    <h2>Author: Jun Hee Lee</h2>
+    <div class="author-profile">
+      <img src="/lib/pictures/jun-hee-lee.png" alt="Jun Hee Lee">
+      <div class="author-bio">
+        <p>
+          Jun Hee Lee grew up in South Korea and received his PhD in 2006 from the Korea Advanced Institute of Science and Technology (KAIST). He completed his postdoctoral fellowship in the laboratory of Dr. Michael Karin at UC San Diego. He came to the University of Michigan in 2011, and is currently a Professor of Molecular and Integrative Physiology.<br> <br>
+
+Beyond the laboratory, Lee is also a writer. What began as bedtime stories for his son about Korea’s ancient myths and heroes grew into a passion project: retelling the story of Korea in English for children and families. His work blends legend and history in a way that helps second-generation Korean American children—and curious readers everywhere—discover the beauty, resilience, and heavenly roots of Korea’s past.
+<br><br>
+        </p>
+      </div>
+    </div>
+
+    <!-- Works by this author -->
+    <div class="works-list">
+      <h3>Works by Jun Hee Lee</h3>
+      <div class="works-grid">
+
+        <!-- Book -->
+        <div class="book">
+          <img src="/lib/pictures/k-story-cover-book-1.png" alt="K-Story Cover">
+          <h4><a href="/works/k-story-book-1">K-Story: History and Songs of Korea</a></h4>
+          <p><em>Book 1: Ancient Kingdoms</em></p>
+          <p>Co-authored with Jaewon Lee</p>
+          <p><strong>Releasing November 24, 2025</strong></p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <p>&copy; 2025 Lee Family Press. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>
