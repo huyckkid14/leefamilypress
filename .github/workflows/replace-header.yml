@@ -1,0 +1,22 @@
+name: Replace Header and Deploy
+
+on:
+  push:
+    branches: [ main ]   # change if your branch is 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Replace old header block with new dropdown header
+        run: |
+          find . -type f -name "*.html" -exec perl -0777 -pi -e 's|<header>\s*<h1>Lee Family Press</h1>\s*<nav>\s*<a href="/index.html">Home</a>\s*<a href="/works.html">Works</a>\s*<a href="#contact">Contact</a>\s*</nav>\s*</header>|<header>\n  <h1>Lee Family Press</h1>\n  <nav>\n    <a href="/index.html">Home</a>\n    <a href="/works.html">Works</a>\n    <a href="#contact">Contact</a>\n\n    <div class="dropdown">\n      <a href="#">Authors ▾</a>\n      <div class="dropdown-content">\n        <a href="/authors/jun-hee-lee.html">Jun Hee Lee</a>\n        <a href="/authors/jaewon-lee.html">Jaewon Lee</a>\n      </div>\n    </div>\n  </nav>\n</header>\n\n<style>\n/* Dropdown wrapper */\n.dropdown {\n  position: relative;\n  display: inline-block;\n}\n\n/* Dropdown menu */\n.dropdown-content {\n  display: none;\n  position: absolute;\n  top: 100%;\n  right: 0;          /* keeps aligned with Authors link */\n  left: auto;        /* prevent sticking to page edge */\n  background: #222;\n  padding: 0.5rem 0;\n  border-radius: 6px;\n  box-shadow: 0 4px 8px rgba(0,0,0,0.3);\n  min-width: 180px;\n  z-index: 1000;\n}\n\n/* Links inside dropdown */\n.dropdown-content a {\n  display: block;\n  padding: 0.5rem 1rem;\n  color: #ddd;\n  text-decoration: none;\n  transition: background 0.3s, color 0.3s;\n}\n\n.dropdown-content a:hover {\n  background: #333;\n  color: #ff6600;\n}\n\n/* Show dropdown on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n</style>|g' {} +
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
