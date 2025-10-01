@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Story: History and Songs of Korea - Book 1</title>
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #f0f0f0;
+      background: #1c1c1c;
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(45deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    nav a {
+      color: #ddd;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: #ff6600; }
+
+    .section {
+      padding: 6rem 2rem 4rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Float-based layout */
+    .book-cover {
+      float: left;
+      width: 280px;
+      aspect-ratio: 2 / 3;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #333;
+      margin-right: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .book-info {
+      margin-bottom: 1rem;
+    }
+    .book-info p {
+      margin: 0.3rem 0;
+      color: #ccc;
+    }
+    .release-date {
+      font-weight: bold;
+      color: #ff9933;
+    }
+    .book-info a {
+      color: #ccc;
+      text-decoration: underline;
+    }
+
+    .description p {
+      margin: 1rem 0;
+      color: #ccc;
+    }
+
+    footer {
+      clear: both; /* make sure footer isn’t pulled next to float */
+      padding: 2rem;
+      background: #000;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Lee Family Press</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/works.html">Works</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="section">
+    <h2>Apple</h2>
+    
+    <img src="/lib/pictures/apple-cover.png" 
+         alt="K-Story Book 1 Cover" class="book-cover">
+
+    <div class="book-info">
+      <p><em>Book 1 of 1</em></p>
+      <p>By <a href="/authors/jaewon-lee.html">Jaewon Lee</a></p>
+      <p class="release-date">Releasing October 15, 2025</p>
+    </div>
+
+    <div class="description">
+      <p>
+        “Unless a kernel of wheat falls to the ground and dies, it remains only a single seed. But if it dies, it produces many seeds.”<br>—John 12:24 (NIV)
+      </p>
+      <p>
+        Every parent wants a children's storybook to be appealing, fun, and full of life lessons. There is no other book that meets the requirement better than Apple.
+      </p>
+      <p>
+        The story follows Apple, who waits quietly in a tree and wonders when his time will come. With warmth and gentle humor in the book, young readers are drawn into a colorful adventure with Apple that sparks curiosity and encourages imagination.
+      </p>
+      <p>
+        Parents will appreciate positive message woven into the tale — a reminder that even the tiniest beginnings can grow into a wonderful life.
+      </p>
+      <p>
+      	Ideal for bedtime or classroom reading, Apple is more than a story. It is an invitation for children to giggle, dream, and imagine together — even when their ideas are a little bit silly.
+      </p>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <p>&copy; 2025 Lee Family Press. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>
