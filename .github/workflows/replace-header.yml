@@ -2,7 +2,7 @@ name: Replace Header and Deploy
 
 on:
   push:
-    branches: [ main ]   # change if your branch is 'master'
+    branches: [ main ]
 
 jobs:
   build:
@@ -14,7 +14,8 @@ jobs:
       - name: Replace any header block
         run: |
           find . -type f -name "*.html" -exec perl -0777 -pi -e '
-            s|<header>.*?</header>|<header>
+            my $new = <<'END_HEADER';
+<header>
   <h1>Lee Family Press</h1>
   <nav>
     <a href="/index.html">Home</a>
@@ -71,7 +72,10 @@ jobs:
 .dropdown:hover .dropdown-content {
   display: block;
 }
-</style>|gs' {} +
+</style>
+END_HEADER
+            s|<header>.*?</header>|$new|gs;
+          ' {} +
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
