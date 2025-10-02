@@ -1,0 +1,30 @@
+name: Replace Header
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  update-header:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Replace headers with external file
+        run: |
+          find . -type f -name "*.html" \
+            -exec perl -0777 -pi -e '{
+              local $/;
+              open my $fh, "<", "header.html" or die $!;
+              my $new = do { local $/; <$fh> };
+              s|<header>.*?</header>|$new|gs;
+            }' {} +
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git commit -m "Update header from header.html" || echo "No changes"
+          git push
