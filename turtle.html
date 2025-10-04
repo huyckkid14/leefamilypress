@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Turtle, O Turtle! - Lee Family Press</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      color: #fff;
+      background: url("/lib/pictures/turtle-song-bg.jpeg") center center/cover no-repeat;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 0;
+    }
+
+    /* Header / Navbar */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(45deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    nav a {
+      color: #ddd;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: #ff6600; }
+
+    /* Page Content */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 2rem 4rem;
+      text-align: center;
+    }
+    .section h2 {
+      font-size: 2.5em;
+      margin-bottom: 0.5rem;
+    }
+    .section h3 {
+      font-size: 1.2em;
+      font-weight: 300;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    /* Player */
+    .player {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      width: 400px;
+      max-width: 90%;
+      margin: 0 auto 30px auto;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    .btn {
+      background: #1db954;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover { background: #1ed760; }
+    .seekbar {
+      width: 100%;
+      margin: 15px 0;
+      -webkit-appearance: none;
+      height: 5px;
+      border-radius: 5px;
+      background: #444;
+      outline: none;
+      cursor: pointer;
+    }
+    .seekbar::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .time {
+      font-size: 0.9em;
+      display: flex;
+      justify-content: space-between;
+      opacity: 0.8;
+    }
+
+    /* Description */
+    .mini-text {
+      font-size: 1em;
+      line-height: 1.6;
+      max-width: 850px;
+      margin: 0 auto 40px auto;
+      opacity: 0.95;
+      text-align: left;
+    }
+
+    /* Lyrics comparison */
+    .lyrics-compare {
+      display: flex;
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .lyrics-box {
+      flex: 1;
+      background: rgba(0,0,0,0.55);
+      border-radius: 10px;
+      padding: 20px;
+      height: 400px;
+      overflow-y: auto;
+      text-align: left;
+      font-size: 0.95em;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+    .lyrics-box h4 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+      color: #ff9933;
+    }
+    .lyrics-box::-webkit-scrollbar { width: 6px; }
+    .lyrics-box::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 800px) {
+      .lyrics-compare { flex-direction: column; }
+    }
+
+    footer {
+      padding: 2rem;
+      background: #000;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Lee Family Press</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/works.html">Works</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="section">
+    <h2>Turtle, O Turtle!</h2>
+    <h3>The Song That Summons The Turtle</h3>
+
+    <div class="player">
+      <audio id="audio" src="/lib/music/turtle-song.mp3"></audio>
+      <input type="range" id="seekbar" class="seekbar" value="0" step="0.01">
+      <div class="time">
+        <span id="currentTime">0:00</span>
+        <span id="duration">0:00</span>
+      </div>
+      <div class="controls">
+        <button id="playPause" class="btn">▶</button>
+      </div>
+    </div>
+
+    <div class="mini-text">
+      Long ago in the land of Gaya, nine village chiefs gathered on a hill called Gujibong—“Turtle Hill.”  
+      Their people were many, but they had no ruler to unite them. So the chiefs prayed together, asking the heavens to send them a king.<br><br>
+      They danced around the hilltop, stamping their feet and raising their voices in a chant so ancient and powerful that it echoed across the sky:  
+      “Turtle, O Turtle! Show us your head! If you will not show it, we will burn you, we will roast you, we will eat you!”<br><br>
+      Though it may sound like a threat to modern ears, it was really a sacred plea—a call for the divine to reveal a leader.  
+      The turtle represented both the heavens and the earth, and asking it to “show its head” was a way of begging heaven to reveal the one who would guide them.<br><br>
+      Then, the heavens answered. From the clouds descended a golden chest holding six radiant eggs.  
+      From those eggs were born six boys who would grow into wise kings. The greatest among them was Suro Kim, the first ruler of Golden-Crown Gaya, who led his people into unity and strength.
+    </div>
+
+    <div class="lyrics-compare">
+      <div class="lyrics-box">
+        <h4>Original Chant</h4>
+Turtle, O Turtle!  
+Show us your head!  
+If you will not show it,  
+We will burn you,  
+We will roast you,  
+We will eat you!
+      </div>
+
+      <div class="lyrics-box">
+        <h4>New Lyrics</h4>
+Turtle, O Turtle!  
+Show us your head!  
+If you will not show it,  
+We will burn you,  
+We will roast you,  
+We will eat you!  
+
+Knock on the shell—will you answer back?  
+Knock-knock! Knock-knock!  
+
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
+
+River runs steady, sky like a bell,  
+Voices together calling the shell.  
+Do not be afraid—step into the sun,  
+When we keep the rhythm, many hearts are one.  
+
+Send us the one who will unite us!  
+Give us the ruler who will guide us!  
+Turtle, O Turtle, we will keep you safe.  
+Show us your head—come join our pace.  
+
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
+
+Show us, show us—Turtle hear our cry,  
+Let the daylight shine!  
+Show us, show us—Turtle hear our cry,  
+We will walk the line!  
+
+Show us, show us—Turtle hear our cry,  
+Voices loud and strong!  
+Show us, show us—Turtle hear our cry,  
+We all sing along!  
+
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
+
+BUM — BUM — BUM … silence
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <p>&copy; 2025 Lee Family Press. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    const audio = document.getElementById("audio");
+    const playPause = document.getElementById("playPause");
+    const seekbar = document.getElementById("seekbar");
+    const currentTimeEl = document.getElementById("currentTime");
+    const durationEl = document.getElementById("duration");
+
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min}:${sec < 10 ? "0" + sec : sec}`;
+    }
+
+    playPause.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play();
+        playPause.textContent = "⏸";
+      } else {
+        audio.pause();
+        playPause.textContent = "▶";
+      }
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      durationEl.textContent = formatTime(audio.duration);
+      seekbar.max = audio.duration;
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      seekbar.value = audio.currentTime;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+
+    seekbar.addEventListener("input", () => {
+      audio.currentTime = seekbar.value;
+    });
+  </script>
+</body>
+</html>
