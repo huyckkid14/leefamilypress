@@ -20,8 +20,8 @@ jobs:
 
       - name: Replace headers in HTML files
         run: |
-          find . -type f -name "*.html" \
-            -exec perl -0777 -pi -e 's|<header\b[^>]*>.*?</header>|$ENV{NEW_HEADER}|is' {} +
+          find . -type f -name "*.html" -print0 \
+            | xargs -0 -n1 perl -0777 -pi -e 's|<header\b[^>]*>.*?</header>|$ENV{NEW_HEADER}|is'
 
       - name: Commit changes
         run: |
