@@ -1,6 +1,17 @@
+name: Header Update and Style Cleanup
+
+# This section defines WHEN the workflow should run.
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch: # Allows manual running from the Actions tab
+
 jobs:
   update-header:
     runs-on: ubuntu-latest
+    # Prevents infinite loops if the commit is made by the bot itself
     if: github.actor != 'github-actions[bot]'
     steps:
       - name: Checkout repo
@@ -29,10 +40,9 @@ jobs:
 
             # The main Perl command for cleaning and replacing
             perl -0777 -pi -e '
-              # 1. REMOVE REPEATED DROPDOWN STYLE TAGS
-              # This robustly finds and deletes the multi-line style block containing the unique .dropdown CSS.
-              # The "gis" flags are essential for global, case-insensitive, multi-line matching.
-              s|<style\b[^>]*>\s*\.dropdown\s*\{.*?display:\s*block;\s*\}\s*</style>||gis;
+              # 1. REMOVE REPEATED DROPDOWN STYLE TAGS (ROBUST PATTERN)
+              # Finds any style block that contains the unique ".dropdown" selector and deletes the whole block.
+              s|<style\b[^>]*>\s*\.dropdown\b.*?<\/style>||gis;
 
               # 2. Remove ALL existing <header>...</header> blocks
               s|<header\b[^>]*>.*?</header>||gis;
@@ -64,5 +74,5 @@ jobs:
 
       - name: Commit changes
         run: |
-          git commit -m "Replace all headers and clean repeated style tags with header.html" || echo "No changes"
+          git commit -m "Replace all headers and clean repeated style tags with header.html" || echo "No changes to commit"
           git push
