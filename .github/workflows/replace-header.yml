@@ -18,17 +18,32 @@ jobs:
       - name: Load header into env
         run: echo "NEW_HEADER<<EOF" >> $GITHUB_ENV && cat header.html >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
 
-      - name: Replace headers and stage one file at a time
+      - name: Replace headers one file at a time
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-          # Loop through each HTML file one by one
+          # Process each HTML file individually
           find . -type f -name "*.html" -print0 |
           while IFS= read -r -d '' file; do
-            echo "Updating $file"
-            perl -0777 -pi -e 's|<header\b[^>]*>.*?</header>|$ENV{NEW_HEADER}|is' "$file"
+            echo "Cleaning and updating $file"
+            perl -0777 -pi -e '
+              # 1. Remove ALL <header>...</header> blocks
+              s|<header\b[^>]*>.*?</header>||gis;
+
+              # 2. Insert NEW header right after <body>, or at start if <body> missing
+              if ($ENV{NEW_HEADER}) {
+                if (s|(<body[^>]*>)|$1\n$ENV{NEW_HEADER}|i) {
+                  # inserted after <body>
+                } else {
+                  $_ = "$ENV{NEW_HEADER}\n$_";
+                }
+              }
+            ' "$file"
             git add "$file"
-            git commit -m "Update header in $file" || echo "No changes in $file"
-            git push || echo "No push needed"
           done
+
+      - name: Commit changes
+        run: |
+          git commit -m "Replace all headers with header.html" || echo "No changes"
+          git push
