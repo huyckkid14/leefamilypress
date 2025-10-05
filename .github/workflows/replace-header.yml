@@ -1,11 +1,28 @@
-- name: Replace headers and clean styles (FINAL FIX)
+name: Header Update and Style Cleanup
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  update-header:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # THIS IS THE BLOCK YOU PROVIDED AND CONFIRMED
+      - name: Replace headers and clean styles (FINAL FIX)
         run: |
           # Set Git user/email
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           
           # 1. Create a temporary file to hold the header content
-          # This file path is short and does not cause the "Argument list too long" error.
           NEW_HEADER_FILE=$(mktemp)
           cat header.html > "$NEW_HEADER_FILE"
 
@@ -17,7 +34,6 @@
             echo "Processing $file"
 
             # 3. The Perl command now uses a BEGIN block to read the header file
-            # The command line argument is now short, fixing the crash.
             perl -0777 -pi -e '
               # A. Read the header content from the temporary file BEFORE processing
               BEGIN { 
@@ -33,7 +49,6 @@
               s|<header\b[^>]*>.*?</header>||gis;
 
               # D. Insert the NEW header content after the <body> tag
-              # It uses the internal Perl variable $new_header_content
               if (s|(<body[^>]*>)|$1\n$new_header_content|i) {} 
             ' "$file"
 
