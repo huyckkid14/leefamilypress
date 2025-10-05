@@ -15,15 +15,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Replace headers with external file
+      - name: Load header into env
+        run: echo "NEW_HEADER<<EOF" >> $GITHUB_ENV && cat header.html >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
+
+      - name: Replace headers in HTML files
         run: |
           find . -type f -name "*.html" \
-            -exec perl -0777 -pi -e '{
-              local $/;
-              open my $fh, "<", "header.html" or die $!;
-              my $new = do { local $/; <$fh> };
-              s|<header>.*?</header>|$new|gs;
-            }' {} +
+            -exec perl -0777 -pi -e 's|<header\b[^>]*>.*?</header>|$ENV{NEW_HEADER}|is' {} +
 
       - name: Commit changes
         run: |
