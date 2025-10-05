@@ -1,56 +1,48 @@
-name: Header Update and Style Cleanup
-
-# Runs when you push code to main/master, or run it manually
-on:
-  push:
-    branches:
-      - main
-      - master
-  workflow_dispatch:
-
-jobs:
-  update-header:
-    runs-on: ubuntu-latest
-    if: github.actor != 'github-actions[bot]'
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Replace headers and clean styles (SAFE LOOP)
+- name: Replace headers and clean styles (FINAL FIX)
         run: |
           # Set Git user/email
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           
-          # 1. Load header.html content into a variable (one time only)
-          # This variable injection is used by the fast Perl script.
-          NEW_HEADER_CONTENT=$(cat header.html | tr '\n' ' ' | tr "'" '"')
+          # 1. Create a temporary file to hold the header content
+          # This file path is short and does not cause the "Argument list too long" error.
+          NEW_HEADER_FILE=$(mktemp)
+          cat header.html > "$NEW_HEADER_FILE"
 
-          # 2. Use 'find' and 'while' loop to process files ONE-BY-ONE.
-          # This method is slow but RELIABLE, preventing the "Argument list too long" crash.
+          # 2. Use 'find' and 'while' loop to process files one-by-one.
           find . -type f -name "*.html" -print0 |
           while IFS= read -r -d '' file; do
-            # Skip header.html itself
             if [ "$file" = "./header.html" ]; then continue; fi
 
             echo "Processing $file"
 
-            # 3. Apply the FAST Perl logic to the single file being read in the loop
+            # 3. The Perl command now uses a BEGIN block to read the header file
+            # The command line argument is now short, fixing the crash.
             perl -0777 -pi -e '
-              # A. Remove ALL repeated style blocks (Fixes the large file size issue)
+              # A. Read the header content from the temporary file BEFORE processing
+              BEGIN { 
+                # The path to the temporary file is safely injected here: '"$NEW_HEADER_FILE"'
+                $new_header_content = do { local $/; open my $fh, "<", "'"$NEW_HEADER_FILE"'"; <$fh> };
+                chomp($new_header_content);
+              }
+
+              # B. Remove ALL repeated style blocks (Fixes the large file size issue)
               s|<style\b[^>]*>\s*\.dropdown\b.*?<\/style>||gis;
 
-              # B. Remove ALL old <header>...</header> blocks
+              # C. Remove ALL old <header>...</header> blocks
               s|<header\b[^>]*>.*?</header>||gis;
 
-              # C. Insert the NEW header content after the <body> tag
-              # The shell variable is injected here: '"$NEW_HEADER_CONTENT"'
-              if (s|(<body[^>]*>)|$1\n'"$NEW_HEADER_CONTENT"'|i) {} 
+              # D. Insert the NEW header content after the <body> tag
+              # It uses the internal Perl variable $new_header_content
+              if (s|(<body[^>]*>)|$1\n$new_header_content|i) {} 
             ' "$file"
 
             git add "$file"
           done
 
-          # 4. Commit and push changes once
+          # 4. Clean up the temporary header file
+          rm "$NEW_HEADER_FILE"
+
+          # 5. Commit and push changes
           git commit -m "Automated: Cleaned redundant styles and updated headers." || echo "No changes to commit"
           git push
