@@ -18,15 +18,17 @@ jobs:
       - name: Load header into env
         run: echo "NEW_HEADER<<EOF" >> $GITHUB_ENV && cat header.html >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
 
-      - name: Replace headers in HTML files
+      - name: Replace headers and stage changes (one file at a time)
         run: |
-          find . -type f -name "*.html" -print0 \
-            | xargs -0 -n1 perl -0777 -pi -e 's|<header\b[^>]*>.*?</header>|$ENV{NEW_HEADER}|is'
+          find . -type f -name "*.html" -print0 |
+          while IFS= read -r -d '' file; do
+            perl -0777 -pi -e 's|<header\b[^>]*>.*?</header>|$ENV{NEW_HEADER}|is' "$file"
+            git add "$file"
+          done
 
       - name: Commit changes
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add .
           git commit -m "Update header from header.html" || echo "No changes"
           git push
