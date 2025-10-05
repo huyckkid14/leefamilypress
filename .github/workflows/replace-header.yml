@@ -16,30 +16,41 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Replace headers and clean styles (FASTER, single-pass)
+      - name: Replace headers and clean styles (SAFE LOOP)
         run: |
           # Set Git user/email
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           
-          # 1. Load header.html content into a variable quickly
-          # This line removes newlines and escapes quotes for safe injection.
+          # 1. Load header.html content into a variable (one time only)
+          # This variable injection is used by the fast Perl script.
           NEW_HEADER_CONTENT=$(cat header.html | tr '\n' ' ' | tr "'" '"')
 
-          # 2. Process ALL HTML files in ONE single, fast Perl command
-          # This is the key to preventing the timeout.
-          perl -0777 -pi -e '
-            # A. Remove ALL repeated style blocks with .dropdown
-            s|<style\b[^>]*>\s*\.dropdown\b.*?<\/style>||gis;
+          # 2. Use 'find' and 'while' loop to process files ONE-BY-ONE.
+          # This method is slow but RELIABLE, preventing the "Argument list too long" crash.
+          find . -type f -name "*.html" -print0 |
+          while IFS= read -r -d '' file; do
+            # Skip header.html itself
+            if [ "$file" = "./header.html" ]; then continue; fi
 
-            # B. Remove ALL old <header>...</header> blocks
-            s|<header\b[^>]*>.*?</header>||gis;
+            echo "Processing $file"
 
-            # C. Insert the NEW header content after the <body> tag
-            if (s|(<body[^>]*>)|$1\n'"$NEW_HEADER_CONTENT"'|i) {} 
-          ' $(find . -type f -name "*.html" ! -name "header.html")
+            # 3. Apply the FAST Perl logic to the single file being read in the loop
+            perl -0777 -pi -e '
+              # A. Remove ALL repeated style blocks (Fixes the large file size issue)
+              s|<style\b[^>]*>\s*\.dropdown\b.*?<\/style>||gis;
 
-          # 3. Commit changes once
-          git add "*.html"
+              # B. Remove ALL old <header>...</header> blocks
+              s|<header\b[^>]*>.*?</header>||gis;
+
+              # C. Insert the NEW header content after the <body> tag
+              # The shell variable is injected here: '"$NEW_HEADER_CONTENT"'
+              if (s|(<body[^>]*>)|$1\n'"$NEW_HEADER_CONTENT"'|i) {} 
+            ' "$file"
+
+            git add "$file"
+          done
+
+          # 4. Commit and push changes once
           git commit -m "Automated: Cleaned redundant styles and updated headers." || echo "No changes to commit"
           git push
