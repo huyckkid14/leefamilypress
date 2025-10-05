@@ -1,11 +1,5 @@
-name: Replace Header
-
-on:
-  push:
-    branches: [ main ]
-
-permissions:
-  contents: write
+---
+## Fixed Workflow Step
 
 jobs:
   update-header:
@@ -15,31 +9,68 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Load header into env
-        run: echo "NEW_HEADER<<EOF" >> $GITHUB_ENV && cat header.html >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
+      # Removed the "Load header into env" step
+      # The header content will now be read directly from the file in the next step.
 
       - name: Replace headers one file at a time
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
+          # Load the header content into a SHELL variable for the perl script
+          # The entire content of header.html is stored in the shell variable $NEW_HEADER_CONTENT
+          # The 'tr' command is used here to escape single quotes, which are common in HTML/CSS,
+          # so they don't break the perl command's outer single quotes.
+          NEW_HEADER_CONTENT=$(cat header.html | tr "'" '"')
+
           # Process each HTML file individually
           find . -type f -name "*.html" -print0 |
           while IFS= read -r -d '' file; do
             echo "Cleaning and updating $file"
+            
+            # The perl command now uses the shell variable NEW_HEADER_CONTENT
+            # The -e '...' must use single quotes for the outer command, and we
+            # use the shell's substitution "$NEW_HEADER_CONTENT" to inject the value.
+            # We also wrap the injected content in double quotes and then escape 
+            # them with another set of double quotes, but since we are using 'tr' above 
+            # to replace the single quotes with double quotes inside $NEW_HEADER_CONTENT, 
+            # this might still be error-prone. A better, more reliable way is to 
+            # use a simpler `sed` or `awk` script or a script that reads from a file.
+
+            # --- Reworked Perl Command to read from the file ---
+            # It's safest to use a marker to inject the content directly in the file 
+            # without passing it through an environment variable or a complex shell variable.
+            
+            # Create a temporary file with the new header content
+            NEW_HEADER_FILE=$(mktemp)
+            cat header.html > $NEW_HEADER_FILE
+
             perl -0777 -pi -e '
               # 1. Remove ALL <header>...</header> blocks
               s|<header\b[^>]*>.*?</header>||gis;
 
-              # 2. Insert NEW header right after <body>, or at start if <body> missing
-              if ($ENV{NEW_HEADER}) {
-                if (s|(<body[^>]*>)|$1\n$ENV{NEW_HEADER}|i) {
+              # 2. Read new header content from the temporary file
+              # This uses Perl's ability to read a file's content into a variable.
+              BEGIN { 
+                # Path to the temporary file containing the new header content
+                $new_header_content = do { local $/; open my $fh, "<", "'$NEW_HEADER_FILE'"; <$fh> };
+                # Remove trailing newline that 'cat' might add
+                chomp($new_header_content);
+              }
+
+              # 3. Insert NEW header right after <body>, or at start if <body> missing
+              if ($new_header_content) {
+                if (s|(<body[^>]*>)|$1\n$new_header_content|i) {
                   # inserted after <body>
                 } else {
-                  $_ = "$ENV{NEW_HEADER}\n$_";
+                  $_ = "$new_header_content\n$_";
                 }
               }
             ' "$file"
+            
+            # Clean up the temporary file after the perl run
+            rm $NEW_HEADER_FILE
+            
             git add "$file"
           done
 
