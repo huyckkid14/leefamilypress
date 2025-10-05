@@ -1,78 +1,45 @@
 name: Header Update and Style Cleanup
 
-# This section defines WHEN the workflow should run.
+# Runs when you push code to main/master, or run it manually
 on:
   push:
     branches:
       - main
       - master
-  workflow_dispatch: # Allows manual running from the Actions tab
+  workflow_dispatch:
 
 jobs:
   update-header:
     runs-on: ubuntu-latest
-    # Prevents infinite loops if the commit is made by the bot itself
     if: github.actor != 'github-actions[bot]'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Replace headers one file at a time
+      - name: Replace headers and clean styles (FASTER, single-pass)
         run: |
-          # Set Git user/email for committing changes
+          # Set Git user/email
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
+          
+          # 1. Load header.html content into a variable quickly
+          # This line removes newlines and escapes quotes for safe injection.
+          NEW_HEADER_CONTENT=$(cat header.html | tr '\n' ' ' | tr "'" '"')
 
-          # Process each HTML file individually
-          find . -type f -name "*.html" -print0 |
-          while IFS= read -r -d '' file; do
-            # Skip the header file itself to prevent issues if it is an .html file
-            if [ "$file" = "./header.html" ]; then
-                echo "Skipping header.html file."
-                continue
-            fi
+          # 2. Process ALL HTML files in ONE single, fast Perl command
+          # This is the key to preventing the timeout.
+          perl -0777 -pi -e '
+            # A. Remove ALL repeated style blocks with .dropdown
+            s|<style\b[^>]*>\s*\.dropdown\b.*?<\/style>||gis;
 
-            echo "Cleaning and updating $file"
+            # B. Remove ALL old <header>...</header> blocks
+            s|<header\b[^>]*>.*?</header>||gis;
 
-            # Create a temporary file with the new header content
-            NEW_HEADER_FILE=$(mktemp)
-            cat header.html > $NEW_HEADER_FILE
+            # C. Insert the NEW header content after the <body> tag
+            if (s|(<body[^>]*>)|$1\n'"$NEW_HEADER_CONTENT"'|i) {} 
+          ' $(find . -type f -name "*.html" ! -name "header.html")
 
-            # The main Perl command for cleaning and replacing
-            perl -0777 -pi -e '
-              # 1. REMOVE REPEATED DROPDOWN STYLE TAGS (ROBUST PATTERN)
-              # Finds any style block that contains the unique ".dropdown" selector and deletes the whole block.
-              s|<style\b[^>]*>\s*\.dropdown\b.*?<\/style>||gis;
-
-              # 2. Remove ALL existing <header>...</header> blocks
-              s|<header\b[^>]*>.*?</header>||gis;
-
-              # 3. Read new header content from the temporary file
-              BEGIN { 
-                # Path to the temporary file containing the new header content
-                $new_header_content = do { local $/; open my $fh, "<", "'$NEW_HEADER_FILE'"; <$fh> };
-                # Remove trailing newline that "cat" might add
-                chomp($new_header_content);
-              }
-
-              # 4. Insert NEW header right after <body>, or at start if <body> missing
-              if ($new_header_content) {
-                if (s|(<body[^>]*>)|$1\n$new_header_content|i) {
-                  # inserted after <body>
-                } else {
-                  # Fallback for HTML documents missing a <body> tag
-                  $_ = "$new_header_content\n$_";
-                }
-              }
-            ' "$file"
-
-            # Clean up the temporary file after the perl run
-            rm $NEW_HEADER_FILE
-
-            git add "$file"
-          done
-
-      - name: Commit changes
-        run: |
-          git commit -m "Replace all headers and clean repeated style tags with header.html" || echo "No changes to commit"
+          # 3. Commit changes once
+          git add "*.html"
+          git commit -m "Automated: Cleaned redundant styles and updated headers." || echo "No changes to commit"
           git push
