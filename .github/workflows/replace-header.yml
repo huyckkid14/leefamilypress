@@ -1,5 +1,6 @@
 name: Header Update and Style Cleanup
 
+# Runs when you push code to main/master, or run it manually
 on:
   push:
     branches:
@@ -10,25 +11,32 @@ on:
 jobs:
   update-header:
     runs-on: ubuntu-latest
+    # This prevents the job from being cancelled by the bot's own commits
     if: github.actor != 'github-actions[bot]'
+    
+    # THIS BLOCK PREVENTS AUTO-CANCELLATION BY OTHER PUSHES
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: false # The key setting to ensure the job runs to completion
+      
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # THIS IS THE BLOCK YOU PROVIDED AND CONFIRMED
       - name: Replace headers and clean styles (FINAL FIX)
         run: |
           # Set Git user/email
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           
-          # 1. Create a temporary file to hold the header content
+          # 1. Create a temporary file to hold the header content (Fixes Argument List Too Long)
           NEW_HEADER_FILE=$(mktemp)
           cat header.html > "$NEW_HEADER_FILE"
 
-          # 2. Use 'find' and 'while' loop to process files one-by-one.
+          # 2. Use 'find' and 'while' loop to process files one-by-one (Fixes Argument List Too Long)
           find . -type f -name "*.html" -print0 |
           while IFS= read -r -d '' file; do
+            # Skip header.html itself
             if [ "$file" = "./header.html" ]; then continue; fi
 
             echo "Processing $file"
