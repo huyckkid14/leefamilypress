@@ -51,6 +51,13 @@
       -webkit-text-fill-color: transparent;
     }
 
+    .description {
+      font-size: 1rem;
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
     .works-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -64,21 +71,29 @@
       text-align: center;
     }
     .song:hover { transform: translateY(-5px); }
+    .song a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
     .song img {
       width: 100%;
       aspect-ratio: 1 / 1;
       object-fit: cover;
       border-radius: 6px;
       margin-bottom: 1rem;
+      transition: transform 0.3s, opacity 0.3s;
     }
-    .song h4 a,
-    .song h4 a:visited {
+    .song:hover img {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    .song h4 {
       font-size: 1.2rem !important;
-      font-weight: bold;
       color: #ffcc66 !important;
-      text-decoration: none;
+      margin-bottom: 0.5rem !important;
     }
-    .song h4 a:hover { color: #ffaa33 !important; }
+    .song h4:hover { color: #ffaa33 !important; }
 
     footer {
       padding: 2rem;
@@ -140,33 +155,48 @@
 
 <section class="section">
   <h2>K-Story Songs</h2>
-  <p>These are the songs we created for our book, K-Story: History, Legends & Songs of Korea.</p>
-  <br>
+  <p class="description">
+    The stories in our book (<a style="color:white!important;" href="https://leefamilypress.com/works/k-story-book-1.html">K-Story: History, Legends & Songs of Korea</a>) were never meant to rest on the page alone—they were made to be heard.  
+    Here, Korea’s oldest songs find new life through modern voices and melodies that echo across time.  
+    Though their original tunes have vanished through centuries, they rise again here—revived so that  
+    the music of Korea’s ancestors may be heard anew, like timeless echoes of history itself.
+  </p>
+
   <div class="works-grid">
 
     <div class="song">
-      <img src="https://leefamilypress.com/lib/pictures/do-not-cross-bg.jpeg" alt="Do Not Cross the River Cover">
-      <h4><a href="https://leefamilypress.com/do-not-cross-the-river.html">Do Not Cross the River</a></h4>
+      <a href="https://leefamilypress.com/do-not-cross-the-river.html">
+        <img src="https://leefamilypress.com/lib/pictures/do-not-cross-bg.jpeg" alt="Do Not Cross the River Cover">
+        <h4>Do Not Cross the River</h4>
+      </a>
     </div>
 
     <div class="song">
-      <img src="https://leefamilypress.com/lib/pictures/turtle-song-bg.jpeg" alt="Turtle, O Turtle! Cover">
-      <h4><a href="https://leefamilypress.com/turtle.html">Turtle, O Turtle!</a></h4>
+      <a href="https://leefamilypress.com/turtle.html">
+        <img src="https://leefamilypress.com/lib/pictures/turtle-song-bg.jpeg" alt="Turtle, O Turtle! Cover">
+        <h4>Turtle, O Turtle!</h4>
+      </a>
     </div>
 
     <div class="song">
-      <img src="https://leefamilypress.com/lib/pictures/moonlight-bg.jpeg" alt="Song of the Moonlight Road Cover">
-      <h4><a href="https://leefamilypress.com/moonlight.html">Song of the Moonlight Road</a></h4>
+      <a href="https://leefamilypress.com/moonlight.html">
+        <img src="https://leefamilypress.com/lib/pictures/moonlight-bg.jpeg" alt="Song of the Moonlight Road Cover">
+        <h4>Song of the Moonlight Road</h4>
+      </a>
     </div>
 
     <div class="song">
-      <img src="https://leefamilypress.com/lib/pictures/root-bg.jpeg" alt="The Song of the Ginseng Root Cover">
-      <h4><a href="https://leefamilypress.com/root.html">The Song of the Ginseng Root</a></h4>
+      <a href="https://leefamilypress.com/root.html">
+        <img src="https://leefamilypress.com/lib/pictures/root-bg.jpeg" alt="The Song of the Ginseng Root Cover">
+        <h4>The Song of the Ginseng Root</h4>
+      </a>
     </div>
 
     <div class="song">
-      <img src="https://leefamilypress.com/lib/pictures/bird-bg.jpeg" alt="The Song of the Oriole Cover">
-      <h4><a href="https://leefamilypress.com/oriole.html">The Song of the Oriole</a></h4>
+      <a href="https://leefamilypress.com/oriole.html">
+        <img src="https://leefamilypress.com/lib/pictures/bird-bg.jpeg" alt="The Song of the Oriole Cover">
+        <h4>The Song of the Oriole</h4>
+      </a>
     </div>
 
   </div>
