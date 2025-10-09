@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Story Songs - Lee Family Press</title>
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #f0f0f0;
+      background: #1c1c1c;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(45deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    nav a {
+      color: #ddd;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: #ff6600; }
+
+    .section {
+      padding: 6rem 2rem 4rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .song {
+      background: #222;
+      padding: 1rem;
+      border-radius: 10px;
+      transition: transform 0.3s;
+      text-align: center;
+    }
+    .song:hover { transform: translateY(-5px); }
+    .song img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+    .song h4 a,
+    .song h4 a:visited {
+      font-size: 1.2rem !important;
+      font-weight: bold;
+      color: #ffcc66 !important;
+      text-decoration: none;
+    }
+    .song h4 a:hover { color: #ffaa33 !important; }
+
+    footer {
+      padding: 2rem;
+      background: #000;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 3rem;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: auto;
+      background: #222;
+      padding: 0.5rem 0;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      min-width: 180px;
+      z-index: 1000;
+    }
+    .dropdown-content a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #ddd;
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .dropdown-content a:hover {
+      background: #333;
+      color: #ff6600;
+    }
+    .dropdown:hover .dropdown-content { display: block; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Lee Family Press</h1>
+  <nav>
+    <a href="https://leefamilypress.com/index.html">Home</a>
+    <a href="https://leefamilypress.com/works.html">Works</a>
+    <a href="https://leefamilypress.com/authors/jaewon-lee.html#contact">Contact</a>
+    <div class="dropdown">
+      <a href="#">Authors ▾</a>
+      <div class="dropdown-content">
+        <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
+        <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="section">
+  <h2>K-Story Songs</h2>
+  <p>These are the songs we created for our book, K-Story: History, Legends & Songs of Korea.</p>
+  <br>
+  <div class="works-grid">
+
+    <div class="song">
+      <img src="https://leefamilypress.com/lib/pictures/do-not-cross-bg.jpeg" alt="Do Not Cross the River Cover">
+      <h4><a href="https://leefamilypress.com/do-not-cross-the-river.html">Do Not Cross the River</a></h4>
+    </div>
+
+    <div class="song">
+      <img src="https://leefamilypress.com/lib/pictures/turtle-song-bg.jpeg" alt="Turtle, O Turtle! Cover">
+      <h4><a href="https://leefamilypress.com/turtle.html">Turtle, O Turtle!</a></h4>
+    </div>
+
+    <div class="song">
+      <img src="https://leefamilypress.com/lib/pictures/moonlight-bg.jpeg" alt="Song of the Moonlight Road Cover">
+      <h4><a href="https://leefamilypress.com/moonlight.html">Song of the Moonlight Road</a></h4>
+    </div>
+
+    <div class="song">
+      <img src="https://leefamilypress.com/lib/pictures/root-bg.jpeg" alt="The Song of the Ginseng Root Cover">
+      <h4><a href="https://leefamilypress.com/root.html">The Song of the Ginseng Root</a></h4>
+    </div>
+
+    <div class="song">
+      <img src="https://leefamilypress.com/lib/pictures/bird-bg.jpeg" alt="The Song of the Oriole Cover">
+      <h4><a href="https://leefamilypress.com/oriole.html">The Song of the Oriole</a></h4>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 Lee Family Press. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
