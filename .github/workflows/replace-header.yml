@@ -9,93 +9,43 @@ jobs:
   replace-header:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Replace headers and add style (non-repeating)
+      - name: Replace headers from header.html
+        shell: bash
         run: |
           set -e
 
-          new_header='<header>
-<h1>Lee Family Press</h1>
-<nav>
-<a href="https://leefamilypress.com/index.html">Home</a>
-<a href="https://leefamilypress.com/works.html">Works</a>
-<a href="https://leefamilypress.com/contact.html">Contact</a>
-<div class="dropdown">
-<a href="https://leefamilypress.com/index.html#">Authors ▾</a>
-<div class="dropdown-content">
-<a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
-<a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
-</div>
-</div>
-</nav>
-</header>'
+          # Read the full header (including <style>) from external file
+          new_header=$(cat header.html)
 
-          style_block='<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>'
+          echo "🔧 Starting header replacement..."
 
-          # Replace headers safely
+          # Find and replace headers in all HTML files except .git directory
           find . -type f -name "*.html" -not -path "./.git/*" | while read -r file; do
             echo "→ Processing $file"
 
-            # Only modify if file actually contains a header tag
+            # Only replace if file contains a <header> tag
             if grep -q "<header" "$file"; then
               cp "$file" "$file.bak"
-
-              # Remove any duplicated header (if already replaced)
               perl -0777 -i -pe "s|<header>.*?</header>|$new_header|gs" "$file"
-            fi
-
-            # Insert style only if not already there
-            if ! grep -q "dropdown-content" "$file"; then
-              if grep -q "</head>" "$file"; then
-                perl -0777 -i -pe "s|</head>|$style_block\n</head>|" "$file"
-              else
-                echo -e "$style_block\n$(cat "$file")" > "$file"
-              fi
             fi
           done
 
+          echo "✅ Header replacement complete."
+
       - name: Commit and push if changes
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
           git add .
           if git diff --cached --quiet; then
-            echo "✅ No changes."
+            echo "✅ No changes to commit."
           else
-            git commit -m "Replace headers and ensure dropdown style"
+            git commit -m "Automated header update via header.html"
             git push
+            echo "🚀 Header changes pushed successfully!"
           fi
