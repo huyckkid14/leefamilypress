@@ -98,82 +98,53 @@
 </head>
 <body>
   <header>
-  <h1>Lee Family Press</h1>
-  <nav>
-    <a href="https://leefamilypress.com/index.html">Home</a>
-    <a href="https://leefamilypress.com/works.html">Works</a>
-    <a href="https://leefamilypress.com/contact.html">Contact</a>
-    <div class="dropdown">
-      <a href="#">Authors ▾</a>
-      <div class="dropdown-content">
-        <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
-        <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
-      </div>
-    </div>
-  </nav>
-</header>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
+    <h1>Lee Family Press</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/works.html">Works</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
   <section class="section">
-    <h2>Apple</h2>
+    <h2>K-Story: History and Songs of Korea</h2>
     
-    <img src="/lib/pictures/apple-cover.png" 
+    <img src="/lib/pictures/k-story-cover-book-1.png" 
          alt="K-Story Book 1 Cover" class="book-cover">
 
     <div class="book-info">
-      <p><em>Book 1 of 1</em></p>
-      <p>By <a href="/authors/jaewon-lee.html">Jaewon Lee</a></p>
-      <p class="release-date">Releasing October 15, 2025</p>
+      <p><em>Book 1: Ancient Kingdoms</em></p>
+      <p>By <a href="/authors/jun-hee-lee.html">Jun Hee Lee</a> and 
+         <a href="/authors/jaewon-lee.html">Jaewon Lee</a></p>
+      <p class="release-date">Releasing November 24, 2025</p>
     </div>
 
     <div class="description">
       <p>
-        “Unless a kernel of wheat falls to the ground and dies, it remains only a single seed. But if it dies, it produces many seeds.”<br>—John 12:24 (NIV)
+        Korea is more than K-pop, dramas, and movies—it is a land with deep roots, 
+        where myths of heavenly princes, legends of brilliant generals, and tales 
+        of wise kings and queens shaped a nation’s destiny.
       </p>
       <p>
-        Every parent wants a children's storybook to be appealing, fun, and full of life lessons. There is no other book that meets the requirement better than Apple.
+        Book 1: Ancient Kingdoms takes readers back to the very beginning. 
+        From the first people of the Korean peninsula to the rise of Goguryeo, 
+        Baekje, and Silla, this book tells how small villages grew into mighty kingdoms. 
+        Along the way, readers will meet a bear who became a queen, kings who claimed the 
+        mandate of Heaven, and a princess whose marriage changed history. They will hear 
+        songs of sorrow and triumph, discover the first laws and schools, and watch as 
+        Korea faced massive invasions yet stood firm against the greatest empire of the age.
       </p>
       <p>
-        The story follows Apple, who waits quietly in a tree and wonders when his time will come. With warmth and gentle humor in the book, young readers are drawn into a colorful adventure with Apple that sparks curiosity and encourages imagination.
+        Each chapter blends mystical legend, documented history, and beautiful songs side 
+        by side—showing how the spirit of storytelling and poetry that once stirred ancient 
+        villages still lives on today in K-dramas and K-pop.
       </p>
       <p>
-        Parents will appreciate positive message woven into the tale — a reminder that even the tiniest beginnings can grow into a wonderful life.
-      </p>
-      <p>
-      	Ideal for bedtime or classroom reading, Apple is more than a story. It is an invitation for children to giggle, dream, and imagine together — even when their ideas are a little bit silly.
+        Created especially for Korean American children and families, this book helps young 
+        readers connect with their heritage while inviting all readers to explore the epic 
+        story of Korea’s ancient past. With heroes and heroines, battles and betrayals, and 
+        timeless lessons of courage and resilience, Ancient Kingdoms is the unforgettable 
+        first step into Korea’s dramatic history.
       </p>
     </div>
   </section>

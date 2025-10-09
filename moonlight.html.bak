@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Song of the Oriole - Lee Family Press</title>
+  <title>Song of the Moonlight Road - Lee Family Press</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -10,14 +10,14 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       color: #fff;
-      background: url("https://leefamilypress.com/lib/pictures/bird-bg.jpeg") center center/cover no-repeat;
+      background: url("https://leefamilypress.com/lib/pictures/moonlight-bg.jpeg") center center/cover no-repeat;
       position: relative;
     }
     body::before {
       content: "";
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0,0,0,0.6);
       z-index: 0;
     }
 
@@ -35,7 +35,7 @@
     }
     header h1 {
       font-size: 1.5rem;
-      background: linear-gradient(45deg, #ff6600, #ffaa00);
+      background: linear-gradient(45deg, #ffd480, #ffcc33);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -45,7 +45,7 @@
       text-decoration: none;
       transition: color 0.3s;
     }
-    nav a:hover { color: #ff6600; }
+    nav a:hover { color: #ffcc33; }
 
     .section {
       position: relative;
@@ -65,14 +65,14 @@
     }
 
     .player {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255,255,255,0.1);
       backdrop-filter: blur(10px);
       border-radius: 15px;
       padding: 20px;
       width: 400px;
       max-width: 90%;
-      margin: 0 auto 30px auto;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      margin: 0 auto 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
     }
     .btn {
       background: #1db954;
@@ -143,7 +143,7 @@
       text-align: center;
       margin-bottom: 10px;
       font-size: 1.1em;
-      color: #ff9933;
+      color: #ffd480;
     }
     .lyrics-box::-webkit-scrollbar { width: 6px; }
     .lyrics-box::-webkit-scrollbar-thumb {
@@ -167,61 +167,20 @@
 </head>
 <body>
   <header>
-  <h1>Lee Family Press</h1>
-  <nav>
-    <a href="https://leefamilypress.com/index.html">Home</a>
-    <a href="https://leefamilypress.com/works.html">Works</a>
-    <a href="https://leefamilypress.com/contact.html">Contact</a>
-    <div class="dropdown">
-      <a href="#">Authors ▾</a>
-      <div class="dropdown-content">
-        <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
-        <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
-      </div>
-    </div>
-  </nav>
-</header>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
+    <h1>Lee Family Press</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/works.html">Works</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
   <section class="section">
-    <h2>The Song of the Oriole</h2>
-    <h3>The First Love Song of Korea</h3>
+    <h2>Song of the Moonlight Road</h2>
+    <h3>The Song of Waiting Under the Moon</h3>
 
     <div class="player">
-      <audio id="audio" src="https://leefamilypress.com/lib/music/bird.mp3"></audio>
+      <audio id="audio" src="https://leefamilypress.com/lib/music/moonlight.mp3"></audio>
       <input type="range" id="seekbar" class="seekbar" value="0" step="0.01">
       <div class="time">
         <span id="currentTime">0:00</span>
@@ -233,83 +192,96 @@
     </div>
 
     <div class="mini-text">
-      Goguryeo was a kingdom of hunters, riders, and kings who carved their victories into stone.  
-      Yet even in that world of strength, hearts could still be broken.  
-
-      King Yuri, son of Jumong, once loved a woman from China. For a time, their love brought joy to both lands—but distance and jealousy pulled them apart.  
-      Some said she could not endure life far from home. Others whispered that court rivals poisoned their peace.  
-      Whatever the cause, the mighty king was left alone.  
-
-      One summer day, he walked through the palace garden, weighed down by sorrow.  
-      Above him, two orioles sang together in the trees, their voices filled with affection. Yuri watched, tears glimmering in his eyes.  
-      “They are together,” he murmured, “but I am alone.”  
-
-      From his grief came a song—the *Hwangjoga*, or *Song of the Oriole*—the first love song remembered in Korean history.  
-      Its simple verses spoke of longing and love lost, and they resonated through generations.  
-      In it, the people saw not only a king’s pain, but their own—the ache of distance, of waiting, and of hearts that once beat as one.  
-
-      The song endured through time, reminding all that Goguryeo was not just a land of warriors—it was also a land of hearts, where even a king’s sorrow could echo for centuries.
+      History is not only the story of kings and battles—it is also the story of ordinary hearts.  
+      As Baekje grew powerful, trade flourished across the land. Merchants journeyed with ox-carts along dusty roads and sailed to distant shores. Yet every road meant someone left behind.  
+      <br><br>
+      In those quiet villages, a different song rose—not of armies or rulers, but of waiting wives.  
+      One such melody became known as the <em>Song of the Moonlight Road</em>.  
+      <br><br>
+      They say a woman once stood under the moonlight, waiting for her husband who had gone to the market. She worked by day, but at night her heart ached with worry and longing.  
+      <br><br>
+      And so, she sang to the moon:
     </div>
 
     <div class="lyrics-compare">
       <div class="lyrics-box">
-        <h4>Original Song</h4>
-Two birds fly side by side,  
-But I am left alone.  
-Where is the one I love?  
-My heart longs and longs again.
+        <h4>Old Lyrics (Jeongeupsa)</h4>
+O moon, climb high into the night,  
+Shine your silver light afar—  
+Shine upon the roads he travels,  
+Guide him safely home to me.  
+Ah, my heart—how it trembles!  
+
+Is he still lingering in the marketplace?  
+Tell me, moon, where his footsteps go.  
+Watch that he not stumble, not falter,  
+Nor sink into the dark and troubled mire.  
+Ah, my heart—how it trembles!  
+
+All the goods he carries, let them be—  
+Let him leave them, let them fall aside.  
+Only haste, only return, my love—  
+Before his heart grows weary, before his flame burns dim.  
+Ah, my heart—how it trembles!
       </div>
 
       <div class="lyrics-box">
         <h4>New Lyrics</h4>
-Two birds fly side by side,
-But I am left alone.
-Where is the one I love?
-My heart longs and longs again.
+Moonlight light, climb the sky,  
+Shine upon the road so high.  
+Guide his feet and guard his way,  
+Bring him safely home today.  
 
-I watched you leave, standing on the fortress stone,
-A story of love that the kingdom has known.
-They see the King, the great warrior, the man of the wars,
-They don't see the hole ripped right through my core.
-Every scroll, every banner, every jewel feels cold,
-My future is broken, my history untold.
+Moonlight light… climb the sky…  
+Moonlight light… guard his way…  
 
-Two birds fly side by side,
-But I am left alone.
-Where is the one I love?
-My heart longs and longs again.
+Moonlight light, my heart is weak,  
+Moonlight light, the one I seek.  
+Do not let him stumble, fall,  
+Guide him home through shadows all.  
 
-Two birds fly side by side,
-But I am left alone.
-Where is the one I love?
-My heart longs and longs again.
+Moonlight light—ah, ah—  
+Moonlight light—ah, ah—  
+Guide him back, guide him back,  
+Guide him home to me.  
 
-Two birds fly side by side,
-But I am left alone.
-Where is the one I love?
-My heart longs and longs again.
+If his hands grow tired and sore,  
+Moonlight light, protect him more.  
+If his heart grows faint with fear,  
+Moonlight light, draw him near.  
 
-The lights of the capital city still burn bright,
-But the halls are empty now, drowning in night.
-I hear a faint whisper carried on the line,
-A memory of your smile, that was once only mine.
-I trace your name in the dust of the windowpane,
-Knowing you'll never feel the warmth of my rain.
+Moonlight light… protect him more…  
+Moonlight light… draw him near…  
 
-Two birds fly side by side,
-But I am left alone.
-Where is the one I love?
-My heart longs and longs again.
+Goods may scatter, gold may fade,  
+None of it counts, no price is paid.  
+Let the burdens fall aside,  
+Only love must be my guide.  
 
-Fly high, my love, go where your heart demands,
-I search the ground, but hold only sand.
-I should hate the mountain, hate the crown, hate the throne,
-But I only hate the feeling of standing alone.
+Moonlight light, so pale, so near,  
+Take away my trembling fear.  
+Tell me where his footsteps go,  
+Bring him safe from night’s shadow.  
 
-Two orioles in morning sun...
-Their harmony is known...
-But I am left alone...
-My heart longs and longs again...
+Moonlight light—ah, ah—  
+Moonlight light—ah, ah—  
+Guide him back, guide him back,  
+Guide him home to me.  
+
+Moonlight light, across the sea,  
+Shine the path and let him see.  
+If the waters surge and rise,  
+Keep him safe beneath your eyes.  
+
+Moonlight light… across the sea…  
+Moonlight light… beneath your eyes…  
+
+Ah, my heart—how it trembles!  
+Ah, my heart—how it trembles!  
+Ah, my heart—how it trembles!  
+
+Moonlight light! Moonlight light!  
+Guide him—home to me!
       </div>
     </div>
   </section>
@@ -355,5 +327,9 @@ My heart longs and longs again...
       audio.currentTime = seekbar.value;
     });
   </script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015"
+    integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
+    data-cf-beacon='{"version":"2024.11.0","token":"bb6c99401f9a42c1b7996ad8f27fa4d4"}'
+    crossorigin="anonymous"></script>
 </body>
 </html>

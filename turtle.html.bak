@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Do Not Cross The River - Lee Family Press</title>
+  <title>Turtle, O Turtle! - Lee Family Press</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -10,7 +10,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       color: #fff;
-      background: url("/lib/pictures/do-not-cross-bg.jpeg") center center/cover no-repeat;
+      background: url("/lib/pictures/turtle-song-bg.jpeg") center center/cover no-repeat;
       position: relative;
     }
     body::before {
@@ -118,9 +118,10 @@
     .mini-text {
       font-size: 1em;
       line-height: 1.6;
-      max-width: 800px;
+      max-width: 850px;
       margin: 0 auto 40px auto;
       opacity: 0.95;
+      text-align: left;
     }
 
     /* Lyrics comparison */
@@ -135,7 +136,7 @@
       background: rgba(0,0,0,0.55);
       border-radius: 10px;
       padding: 20px;
-      height: 350px;
+      height: 400px;
       overflow-y: auto;
       text-align: left;
       font-size: 0.95em;
@@ -171,61 +172,20 @@
 </head>
 <body>
   <header>
-  <h1>Lee Family Press</h1>
-  <nav>
-    <a href="https://leefamilypress.com/index.html">Home</a>
-    <a href="https://leefamilypress.com/works.html">Works</a>
-    <a href="https://leefamilypress.com/contact.html">Contact</a>
-    <div class="dropdown">
-      <a href="#">Authors ▾</a>
-      <div class="dropdown-content">
-        <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
-        <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
-      </div>
-    </div>
-  </nav>
-</header>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
+    <h1>Lee Family Press</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/works.html">Works</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
   <section class="section">
-    <h2>Do Not Cross The River</h2>
-    <h3>Korea's Oldest Song Brought Back To Life</h3>
+    <h2>Turtle, O Turtle!</h2>
+    <h3>The Song That Summons The Turtle</h3>
 
     <div class="player">
-      <audio id="audio" src="https://leefamilypress.com/lib/music/do-not-cross-the-river.mp3"></audio>
+      <audio id="audio" src="/lib/music/turtle-song.mp3"></audio>
       <input type="range" id="seekbar" class="seekbar" value="0" step="0.01">
       <div class="time">
         <span id="currentTime">0:00</span>
@@ -237,88 +197,75 @@
     </div>
 
     <div class="mini-text">
-      One of the oldest songs ever recorded in Korea came from a wife standing on the bank of a river.  
-      We don't know her name. We don't know her village. But through her voice, we know her sorrow.  
-      Imagine her there: pleading, crying, warning her husband not to cross.  
-      He does not listen. He crosses—and he drowns.  
-      <br><br>
-      We brought Korea's oldest song, Gongmudohaga, back to life with Suno AI.  
-      The original voice is long gone, but its sorrow, beauty, and longing live on in this song.
+      Long ago in the land of Gaya, nine village chiefs gathered on a hill called Gujibong—“Turtle Hill.”  
+      Their people were many, but they had no ruler to unite them. So the chiefs prayed together, asking the heavens to send them a king.<br><br>
+      They danced around the hilltop, stamping their feet and raising their voices in a chant so ancient and powerful that it echoed across the sky:  
+      “Turtle, O Turtle! Show us your head! If you will not show it, we will burn you, we will roast you, we will eat you!”<br><br>
+      Though it may sound like a threat to modern ears, it was really a sacred plea—a call for the divine to reveal a leader.  
+      The turtle represented both the heavens and the earth, and asking it to “show its head” was a way of begging heaven to reveal the one who would guide them.<br><br>
+      Then, the heavens answered. From the clouds descended a golden chest holding six radiant eggs.  
+      From those eggs were born six boys who would grow into wise kings. The greatest among them was Suro Kim, the first ruler of Golden-Crown Gaya, who led his people into unity and strength.
     </div>
 
     <div class="lyrics-compare">
       <div class="lyrics-box">
-        <h4>Original Lyrics</h4>
-Do not cross the river,  
-Please, my love, please stay.  
-(公無渡河)  
-But you would not listen,  
-And drifted far away.  
-(公竟渡河)  
-Now you are gone—  
-Lost beneath the stream.  
-(墮河而死)  
-My joy has vanished;  
-Alas, what shall I do?  
-(當奈公何)
+        <h4>Original Chant</h4>
+Turtle, O Turtle!  
+Show us your head!  
+If you will not show it,  
+We will burn you,  
+We will roast you,  
+We will eat you!
       </div>
 
       <div class="lyrics-box">
         <h4>New Lyrics</h4>
-Do not cross the river,  
-Please, my love, please stay.  
-The wind was cold and bitter,  
-Yet you walked away.  
+Turtle, O Turtle!  
+Show us your head!  
+If you will not show it,  
+We will burn you,  
+We will roast you,  
+We will eat you!  
 
-I called your name, but silence fell,  
-The water took you in its spell.  
-My hands reached out, but only air,  
-And now you’re gone—forever, nowhere.  
+Knock on the shell—will you answer back?  
+Knock-knock! Knock-knock!  
 
-Do not cross the river,  
-Please, my love, please stay.  
-But you would not listen,  
-And drifted far away.  
-Now you are gone—  
-Lost beneath the stream.  
-My joy has vanished;  
-Alas, what shall I do?  
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
 
-Shadows on the water,  
-Echoes on the shore.  
-Every step I wander,  
-I can’t find you anymore.  
+River runs steady, sky like a bell,  
+Voices together calling the shell.  
+Do not be afraid—step into the sun,  
+When we keep the rhythm, many hearts are one.  
 
-Your laughter fades like twilight’s song,  
-The night feels empty, dark, and long.  
-If I could turn the river’s tide,  
-I’d hold you close, back by my side.  
+Send us the one who will unite us!  
+Give us the ruler who will guide us!  
+Turtle, O Turtle, we will keep you safe.  
+Show us your head—come join our pace.  
 
-Do not cross the river,  
-Please, my love, please stay.  
-But you would not listen,  
-And drifted far away.  
-Now you are gone—  
-Lost beneath the stream.  
-My joy has vanished;  
-Alas, what shall I do?  
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
 
-If love could build a bridge of light,  
-I’d walk across, I’d hold you tight.  
-But rivers flow, and time won’t bend,  
-I lost you once, I lose again.  
+Show us, show us—Turtle hear our cry,  
+Let the daylight shine!  
+Show us, show us—Turtle hear our cry,  
+We will walk the line!  
 
-Do not cross the river,  
-Please, my love, please stay.  
-But you would not listen,  
-And drifted far away.  
-Now you are gone—  
-Lost beneath the stream.  
-My joy has vanished;  
-Alas, what shall I do?  
+Show us, show us—Turtle hear our cry,  
+Voices loud and strong!  
+Show us, show us—Turtle hear our cry,  
+We all sing along!  
 
-Do not cross the river…  
-Alas, what shall I do?
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
+
+BUM — BUM — BUM … silence
       </div>
     </div>
   </section>
