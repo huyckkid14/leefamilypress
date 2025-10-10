@@ -12,28 +12,40 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Replace headers from header.html
+      - name: Replace headers safely (no loss of original styles)
         shell: bash
         run: |
           set -e
-
-          # Read the full header (including <style>) from external file
           new_header=$(cat header.html)
 
-          echo "🔧 Starting header replacement..."
+          echo "🔧 Starting header replacement (safe mode)..."
 
-          # Find and replace headers in all HTML files except .git directory
           find . -type f -name "*.html" -not -path "./.git/*" | while read -r file; do
             echo "→ Processing $file"
 
-            # Only replace if file contains a <header> tag
             if grep -q "<header" "$file"; then
               cp "$file" "$file.bak"
+
+              # 1️⃣ Remove duplicate dropdown-style blocks ONLY (body-level)
+              # This targets <style> blocks that define `.dropdown`
+              perl -0777 -i -pe '{
+                my %seen;
+                s{
+                  (<style>.*?\.dropdown.*?</style>)
+                }{
+                  $seen{$1}++ ? "" : $1
+                }gsex
+              }' "$file"
+
+              # 2️⃣ Replace the header with the one from header.html
               perl -0777 -i -pe "s|<header>.*?</header>|$new_header|gs" "$file"
+
+              # 3️⃣ Optional: Remove excess blank lines after cleanup
+              sed -i '/^$/N;/^\n$/D' "$file"
             fi
           done
 
-          echo "✅ Header replacement complete."
+          echo "✅ Header replacement and cleanup complete (no original styles deleted)."
 
       - name: Commit and push if changes
         shell: bash
@@ -45,7 +57,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "✅ No changes to commit."
           else
-            git commit -m "Automated header update via header.html"
+            git commit -m "Automated header update via header.html (safe, no duplicate dropdown styles)"
             git push
             echo "🚀 Header changes pushed successfully!"
           fi
