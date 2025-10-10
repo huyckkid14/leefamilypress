@@ -12,13 +12,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Replace headers safely (detailed per-file logging)
+      - name: Replace headers safely (final strict cleanup)
         shell: bash
         run: |
           set -e
           new_header=$(cat header.html)
 
-          echo "🔧 Starting header replacement (safe mode)..."
+          echo "🔧 Starting header replacement (strict + safe)..."
 
           find . -type f -name "*.html" -not -path "./.git/*" | while read -r file; do
             echo ""
@@ -27,35 +27,36 @@ jobs:
             if grep -q "<header" "$file"; then
               cp "$file" "$file.bak"
 
-              # Count how many <style> blocks with .dropdown exist before cleanup
+              # Count how many dropdown styles exist BEFORE cleanup
               found_count=$(grep -Poz "(?s)<style>.*?\.dropdown.*?</style>" "$file" | grep -c "<style>" || true)
               echo "Found $found_count <style> block(s) containing .dropdown"
 
-              # Remove duplicate dropdown-style blocks (keep first one)
-              before=$(wc -l < "$file")
-              perl -0777 -i -pe '{
-                my %seen;
+              # 1️⃣ Remove all but the first dropdown-style block (handles multi-line safely)
+              perl -0777 -i -pe '
+                my $first = 0;
                 s{
-                  (<style>.*?\.dropdown.*?</style>)
+                  (<style>[\s\S]*?\.dropdown[\s\S]*?<\/style>)
                 }{
-                  $seen{$1}++ ? "" : $1
+                  if ($first++) { "" } else { $1 }
                 }gsex
-              }' "$file"
-              after=$(wc -l < "$file")
+              ' "$file"
 
-              # Count how many still remain after cleanup
+              # 2️⃣ Remove leftover empty <style></style> tags
+              perl -0777 -i -pe 's|<style>\s*</style>||gs' "$file"
+
+              # 3️⃣ Replace the header with the one from header.html
+              perl -0777 -i -pe "s|<header>.*?</header>|$new_header|gs" "$file"
+
+              # 4️⃣ Clean up blank lines left from removals
+              sed -i '/^$/N;/^\n$/D' "$file"
+
+              # Count remaining dropdown styles
               remaining_count=$(grep -Poz "(?s)<style>.*?\.dropdown.*?</style>" "$file" | grep -c "<style>" || true)
               removed=$((found_count - remaining_count))
+              if [ "$removed" -lt 0 ]; then removed=0; fi
 
               echo "Removed $removed duplicate <style> block(s)"
               echo "Remaining $remaining_count unique dropdown <style> block(s)"
-
-              # Replace header
-              perl -0777 -i -pe "s|<header>.*?</header>|$new_header|gs" "$file"
-
-              # Clean blank lines
-              sed -i '/^$/N;/^\n$/D' "$file"
-
               echo "✅ Cleaned successfully"
             else
               echo "⚠️  No <header> found in $file — skipped."
@@ -63,7 +64,7 @@ jobs:
           done
 
           echo ""
-          echo "✅ Header replacement and cleanup complete (detailed logging)."
+          echo "✅ Header replacement and cleanup complete (strict mode)."
 
       - name: Commit and push if changes
         shell: bash
@@ -75,7 +76,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "✅ No changes to commit."
           else
-            git commit -m "Automated header update via header.html (safe, detailed duplicate cleanup)"
+            git commit -m "Automated header update via header.html (strict, clean, final)"
             git push
             echo "🚀 Header changes pushed successfully!"
           fi
