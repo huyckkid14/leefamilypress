@@ -4,136 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>K-Story Songs - Lee Family Press</title>
-  <style>
-    * {margin: 0; padding: 0; box-sizing: border-box;}
-    body {
-      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: #f0f0f0;
-      background: #1c1c1c;
-    }
-
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-    }
-    header h1 {
-      font-size: 1.5rem;
-      background: linear-gradient(45deg, #ff6600, #ffaa00);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    nav a {
-      color: #ddd;
-      margin-left: 1.5rem;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    nav a:hover { color: #ff6600; }
-
-    .section {
-      padding: 6rem 2rem 4rem;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .section h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      background: linear-gradient(90deg, #ff6600, #ffaa00);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .description {
-      font-size: 1rem;
-      color: #ccc;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
-
-    .works-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-    }
-    .song {
-      background: #222;
-      padding: 1rem;
-      border-radius: 10px;
-      transition: transform 0.3s;
-      text-align: center;
-    }
-    .song:hover { transform: translateY(-5px); }
-    .song a {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
-    .song img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-bottom: 1rem;
-      transition: transform 0.3s, opacity 0.3s;
-    }
-    .song:hover img {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-    .song h4 {
-      font-size: 1.2rem !important;
-      color: #ffcc66 !important;
-      margin-bottom: 0.5rem !important;
-    }
-    .song h4:hover { color: #ffaa33 !important; }
-
-    footer {
-      padding: 2rem;
-      background: #000;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 3rem;
-    }
-
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      left: auto;
-      background: #222;
-      padding: 0.5rem 0;
-      border-radius: 6px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      min-width: 180px;
-      z-index: 1000;
-    }
-    .dropdown-content a {
-      display: block;
-      padding: 0.5rem 1rem;
-      color: #ddd;
-      text-decoration: none;
-      transition: background 0.3s, color 0.3s;
-    }
-    .dropdown-content a:hover {
-      background: #333;
-      color: #ff6600;
-    }
-    .dropdown:hover .dropdown-content { display: block; }
-  </style>
+  
 </head>
 <body>
 
@@ -866,6 +737,44 @@
   display: block;
 }
 </style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+
+
+
 
 
 
