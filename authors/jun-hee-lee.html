@@ -6,11 +6,901 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Author: Jun Hee Lee - Lee Family Press</title>
-  
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #f0f0f0;
+      background: #1c1c1c;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(45deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    nav a {
+      color: #ddd;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: #ff6600; }
+
+    .section {
+      padding: 6rem 2rem 4rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .author-profile {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    .author-profile img {
+      width: 220px;
+      height: 220px;   /* square for 1:1 ratio */
+      object-fit: cover;
+      border-radius: 8px;
+      background: #333;
+    }
+    .author-bio {
+      flex: 1;
+    }
+    .author-bio p a {
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    .works-list h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #ff9933;
+    }
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .book {
+      background: #222;
+      padding: 1rem;
+      border-radius: 10px;
+      transition: transform 0.3s;
+      text-align: center;
+    }
+    .book:hover {
+      transform: translateY(-5px);
+    }
+    .book img {
+      width: 50%;
+      aspect-ratio: 2 / 3; /* keeps 6x9 ratio */
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+    .book h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #ffcc66;
+    }
+    .book p {
+      margin: 0.3rem 0;
+      color: #bbb;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      padding: 2rem;
+      background: #000;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 3rem;
+    }
+    .book h4 a,
+.book h4 a:visited {
+  font-size: 1.2rem !important;
+  font-weight: bold;
+  color: #ffcc66 !important;  /* same as Apple */
+  text-decoration: none;      /* remove underline */
+}
+.book h4 a:hover {
+  color: #ffaa33 !important;  /* lighter orange on hover */
+}
+  </style>
+</head>
+<body>
+  <header>
+  <h1>Lee Family Press</h1>
+  <nav>
+    <a href="https://leefamilypress.com/index.html">Home</a>
+    <a href="https://leefamilypress.com/works.html">Works</a>
+    <a href="https://leefamilypress.com/contact.html">Contact</a>
+    <div class="dropdown">
+      <a href="#">Authors ▾</a>
+      <div class="dropdown-content">
+        <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
+        <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
 
 
 
 
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
 
 
 
