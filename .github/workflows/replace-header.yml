@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Replace headers safely (no loss of original styles)
+      - name: Replace headers safely (detailed per-file logging)
         shell: bash
         run: |
           set -e
@@ -21,13 +21,18 @@ jobs:
           echo "🔧 Starting header replacement (safe mode)..."
 
           find . -type f -name "*.html" -not -path "./.git/*" | while read -r file; do
+            echo ""
             echo "→ Processing $file"
 
             if grep -q "<header" "$file"; then
               cp "$file" "$file.bak"
 
-              # 1️⃣ Remove duplicate dropdown-style blocks ONLY (body-level)
-              # This targets <style> blocks that define `.dropdown`
+              # Count how many <style> blocks with .dropdown exist before cleanup
+              found_count=$(grep -Poz "(?s)<style>.*?\.dropdown.*?</style>" "$file" | grep -c "<style>" || true)
+              echo "Found $found_count <style> block(s) containing .dropdown"
+
+              # Remove duplicate dropdown-style blocks (keep first one)
+              before=$(wc -l < "$file")
               perl -0777 -i -pe '{
                 my %seen;
                 s{
@@ -36,16 +41,29 @@ jobs:
                   $seen{$1}++ ? "" : $1
                 }gsex
               }' "$file"
+              after=$(wc -l < "$file")
 
-              # 2️⃣ Replace the header with the one from header.html
+              # Count how many still remain after cleanup
+              remaining_count=$(grep -Poz "(?s)<style>.*?\.dropdown.*?</style>" "$file" | grep -c "<style>" || true)
+              removed=$((found_count - remaining_count))
+
+              echo "Removed $removed duplicate <style> block(s)"
+              echo "Remaining $remaining_count unique dropdown <style> block(s)"
+
+              # Replace header
               perl -0777 -i -pe "s|<header>.*?</header>|$new_header|gs" "$file"
 
-              # 3️⃣ Optional: Remove excess blank lines after cleanup
+              # Clean blank lines
               sed -i '/^$/N;/^\n$/D' "$file"
+
+              echo "✅ Cleaned successfully"
+            else
+              echo "⚠️  No <header> found in $file — skipped."
             fi
           done
 
-          echo "✅ Header replacement and cleanup complete (no original styles deleted)."
+          echo ""
+          echo "✅ Header replacement and cleanup complete (detailed logging)."
 
       - name: Commit and push if changes
         shell: bash
@@ -57,7 +75,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "✅ No changes to commit."
           else
-            git commit -m "Automated header update via header.html (safe, no duplicate dropdown styles)"
+            git commit -m "Automated header update via header.html (safe, detailed duplicate cleanup)"
             git push
             echo "🚀 Header changes pushed successfully!"
           fi
