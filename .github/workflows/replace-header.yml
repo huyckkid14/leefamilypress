@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Replace headers safely (final guaranteed fix)
+      - name: Replace headers safely (guaranteed cleanup for styles)
         shell: bash
         run: |
           set -e
@@ -28,17 +28,20 @@ jobs:
               cp "$file" "$file.bak"
 
               # Count how many dropdown style blocks exist before cleanup
+              # NOTE: Using a simpler grep for the count to be less fragile
               found_count=$(grep -Poz "(?s)<style[[:space:]]*[^>]*>.*?\.dropdown.*?</style>" "$file" | grep -c "<style>" || true)
               echo "Found $found_count <style> block(s) containing .dropdown"
-
-              # 1️⃣ Remove all but the first dropdown-style block (handles newlines & \r\n safely)
+              
+              # --- MODIFIED CLEANUP LOGIC ---
+              
+              # 1️⃣ REMOVE *ALL* existing dropdown-style blocks from the file
+              # This ensures no duplicates are left before inserting the new header.
+              # Your new 'header.html' must contain the single correct style block.
+              echo "Attempting to remove all existing dropdown style blocks..."
               perl -0777 -i -pe '
-                my $first = 0;
                 s{
-                  (<style\b[^>]*>\s*[\s\S]*?\.dropdown[\s\S]*?<\/style>)
-                }{
-                  if ($first++) { "" } else { $1 }
-                }gsex
+                  <style\b[^>]*>\s*[\s\S]*?\.dropdown[\s\S]*?<\/style>
+                }{}gsex
               ' "$file"
 
               # 2️⃣ Remove leftover empty <style></style> tags completely
@@ -49,17 +52,23 @@ jobs:
 
               # 4️⃣ Clean up blank lines left after removals
               sed -i '/^$/N;/^\n$/D' "$file"
+              
+              # --- END MODIFIED LOGIC ---
 
-              # Count remaining dropdown style blocks
+              # Count remaining dropdown style blocks (should be 1 if header.html is correct)
               remaining_count=$(grep -Poz "(?s)<style[[:space:]]*[^>]*>.*?\.dropdown.*?</style>" "$file" | grep -c "<style>" || true)
               removed=$((found_count - remaining_count))
-              if [ "$removed" -lt 0 ]; then removed=0; fi
 
-              echo "Removed $removed duplicate <style> block(s)"
-              echo "Remaining $remaining_count unique dropdown <style> block(s)"
+              # If the new header had one, and we found 23, removed should be 22.
+              # We use a simpler message now since the goal is to remove ALL old ones.
+              if [ "$found_count" -gt "0" ]; then 
+                echo "Finished style cleanup: All old dropdown style blocks removed."
+              fi
+              
+              echo "Total dropdown style blocks remaining (should be 1 from new header): $remaining_count"
               echo "✅ Cleaned successfully"
             else
-              echo "⚠️  No <header> found in $file — skipped."
+              echo "⚠️ No <header> found in $file — skipped."
             fi
           done
 
