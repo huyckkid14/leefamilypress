@@ -21,38 +21,34 @@ jobs:
 
           # Find all .html files recursively
           find . -name "*.html" -type f -print0 | while IFS= read -r -d '' HTML_FILE; do
-
-            # Use Perl to identify and remove duplicate <style> blocks
             perl -0777 -pe '
               BEGIN { our %seen; our $removed = 0; }
 
+              # Capture all <style>...</style> blocks
               s{
-                (<style\b[^>]*>.*?</style>)  # Capture <style>...</style> blocks
+                (<style\b[^>]*>.*?</style>)
               }{
                 my $block = $1;
                 my $norm = $block;
-                $norm =~ s/\s+/ /g;   # normalize whitespace for comparison
+                $norm =~ s/\s+/ /g;   # normalize whitespace
 
-                # Detect dropdown style blocks loosely (contains both .dropdown and .dropdown-content)
+                # Detect dropdown style blocks loosely (both .dropdown and .dropdown-content)
                 if ($norm =~ /\.dropdown\s*\{.*?display:\s*inline-block;.*?\}\s*\.dropdown-content/s) {
                   my $sig = "dropdown_signature";
                   if (!$seen{$sig}++) {
-                    $block   # keep the first
+                    $block   # keep first one
                   } else {
                     $removed++;
-                    ""       # remove duplicates
+                    ""       # delete duplicates
                   }
                 } else {
-                  $block     # keep non-dropdown styles
+                  $block     # keep all non-dropdown styles
                 }
               }egsx;
 
-              END {
-                print STDERR "::notice ::Removed $removed duplicate dropdown style block(s)\n";
-              }
+              END { print STDERR "::notice ::Removed $removed duplicate dropdown style block(s)\n"; }
             ' "$HTML_FILE" > "$HTML_FILE.tmp"
 
-            # Replace file only if changed
             if ! cmp -s "$HTML_FILE" "$HTML_FILE.tmp"; then
               mv "$HTML_FILE.tmp" "$HTML_FILE"
               echo "::notice file=${HTML_FILE}::Processed and cleaned."
@@ -63,3 +59,16 @@ jobs:
           done
 
           echo "total_removed=${TOTAL_REMOVED}" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push cleanup
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "🧹 Auto-clean duplicate dropdown styles"
+            git push
+          fi
