@@ -1,71 +1,37 @@
 - name: Find and Clean ROBUST Duplicate Styles
-      id: cleanup_step_robust
-      run: |
-        TOTAL_REMOVED=0
-        
-        # 1. Define the CLEAN (whitespace-stripped) content of the dropdown block.
-        # This uses the full, compressed pattern as the source:
-        PATTERN_SOURCE='<style>.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  top: 100%;  right: 0;  left: auto;  background: #222;  padding: 0.5rem 0;  border-radius: 6px;  box-shadow: 0 4px 8px rgba(0,0,0,0.3);  min-width: 180px;  z-index: 1000;}.dropdown-content a {  display: block;  padding: 0.5rem 1rem;  color: #ddd;  text-decoration: none;  transition: background 0.3s, color 0.3s;}.dropdown-content a:hover {  background: #333;  color: #ff6600;}.dropdown:hover .dropdown-content {  display: block;}</style>'
-        
-        # Strip all whitespace from the pattern source to create the 100% reliable comparison signature
-        FULL_SIGNATURE=$(echo "$PATTERN_SOURCE" | tr -d '[:space:]')
-
-        echo "Starting robust duplicate style cleanup..."
-        
-        # 2. Loop through all HTML files
-        find . -name "*.html" -type f | while IFS= read -r HTML_FILE; do
-            
-            # Use AWK's ability to operate on a range (/<style>/ to /<\/style>/)
-            CLEANED_OUTPUT=$(awk -v sig="$FULL_SIGNATURE" '
-            BEGIN { RS="<style>"; ORS=""; kept_count=0; }
-
-            # For every block (which is everything between <style> tags)
-            {
-                # $0 now contains the content of the block (from just after <style> to </style>inclusive)
-                # Save the original block text
-                original_block = $0;
-                
-                # Strip all whitespace from the current block for comparison
-                cleaned_block = $0;
-                gsub(/[[:space:]]/, "", cleaned_block); 
-
-                # Check if the stripped block matches the full, stripped signature
-                if (cleaned_block == sig) {
-                    # This is the full, verified duplicate block
-                    
-                    if (kept_count == 0) {
-                        # This is the FIRST one found (The keeper)
-                        print "<style>" original_block;
-                        kept_count = 1;
-                    } else {
-                        # This is the SECOND or subsequent duplicate (The one to delete)
-                        # Do NOT print the block.
-                        deleted_count++;
-                    }
-                } else {
-                    # This block does not match the signature (e.g., <body> tag, or different style)
-                    # Print the block as is
+  id: cleanup_step_robust
+  run: |
+    TOTAL_REMOVED=0
+    
+    # 1. Define the CLEAN (whitespace-stripped) content of the dropdown block.
+    # This uses the full, compressed pattern as the source:
+    PATTERN_SOURCE='<style>.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  top: 100%;  right: 0;  left: auto;  background: #222;  padding: 0.5rem 0;  border-radius: 6px;  box-shadow: 0 4px 8px rgba(0,0,0,0.3);  min-width: 180px;  z-index: 1000;}.dropdown-content a {  display: block;  padding: 0.5rem 1rem;  color: #ddd;  text-decoration: none;  transition: background 0.3s, color 0.3s;}.dropdown-content a:hover {  background: #333;  color: #ff6600;}.dropdown:hover .dropdown-content {  display: block;}</style>'
+    
+    FULL_SIGNATURE=$(echo "$PATTERN_SOURCE" | tr -d '[:space:]')
+    echo "Starting robust duplicate style cleanup..."
+    
+    find . -name "*.html" -type f | while IFS= read -r HTML_FILE; do
+        CLEANED_OUTPUT=$(awk -v sig="$FULL_SIGNATURE" '
+        BEGIN { RS="<style>"; ORS=""; kept_count=0; }
+        {
+            original_block = $0;
+            cleaned_block = $0;
+            gsub(/[[:space:]]/, "", cleaned_block);
+            if (cleaned_block == sig) {
+                if (kept_count == 0) {
                     print "<style>" original_block;
+                    kept_count = 1;
+                } else {
+                    deleted_count++;
                 }
+            } else {
+                print "<style>" original_block;
             }
-            # ENDAWK
-            ' "$HTML_FILE")
+        }' "$HTML_FILE")
 
-            # ... (Logging and Commit logic must be adapted for this awk)
-            # The logging part is complex because this AWK changes the file format
-            
-            # --- Simplified Logging for the Robust Script ---
-            # NOTE: We skip re-counting as AWK changes the line breaks.
-            
-            # Write the result back to the file
-            echo "$CLEANED_OUTPUT" > "$HTML_FILE"
-            
-            echo "::notice file=${HTML_FILE}::Processed file using robust multi-line cleanup."
-            
-            # Because we cannot easily get the count out, we assume changes were made
-            # and rely on git-auto-commit to confirm the change.
-            TOTAL_REMOVED=1 # Force commit check for testing
-            
-        done
-        
-        echo "total_removed=${TOTAL_REMOVED}" >> "$GITHUB_OUTPUT"
+        echo "$CLEANED_OUTPUT" > "$HTML_FILE"
+        echo "::notice file=${HTML_FILE}::Processed file using robust multi-line cleanup."
+        TOTAL_REMOVED=1
+    done
+    
+    echo "total_removed=${TOTAL_REMOVED}" >> "$GITHUB_OUTPUT"
