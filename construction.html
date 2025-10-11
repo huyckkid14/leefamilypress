@@ -54,7 +54,6 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
       margin-top: 7rem;
     }
 
@@ -66,7 +65,7 @@
       -webkit-text-fill-color: transparent;
     }
 
-    main p {
+    main p, main li {
       font-size: 1.1rem;
       color: #ccc;
       line-height: 1.6;
@@ -79,9 +78,7 @@
       text-decoration: none;
       font-weight: bold;
     }
-    a:hover {
-      text-decoration: underline;
-    }
+    a:hover { text-decoration: underline; }
 
     footer {
       padding: 1rem;
@@ -91,6 +88,18 @@
       color: #666;
       width: 100%;
       margin-top: auto;
+    }
+
+    #ip-info {
+      margin-top: 1.5rem;
+      background: #222;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,102,0,0.3);
+    }
+
+    #ip-info p {
+      margin: 0.5rem 0;
     }
 
     /* Dropdown styles */
@@ -146,48 +155,37 @@
 
   <main>
     <h2>🚧 Construction 🚧</h2>
-    <p>Sorry, <strong>Lee Family Press</strong> is currently under construction.<br>
-    Please try again later.</p>
-    <p>Reasons why you might get this page:</p>
-    <ul style="list-style: none; padding: 0;">
-      <li>You are logged in on an IP address that the developer did not approve for testing</li>
-      <li>You accidentally navigated to this page manually. In this case, you can <a href="/">return to home.</a></li>
+
+    <div id="ip-info">
+      <p><strong>Your IP:</strong> <span id="client-ip">Checking...</span></p>
+      <p><strong>Allowed IP:</strong> <span id="allowed-status">Checking...</span></p>
+    </div>
+
+    <p>Some reasons why you might be getting this message:</p>
+    <ul style="list-style:none; padding:0;">
+      <li>1️⃣ You are not part of the testing group</li>
+      <li>2️⃣ You accidentally navigated to this page manually</li>
     </ul>
-    <p>For more details, please contact the developer at<br>
-    <a href="mailto:bestorangelover@gmail.com">bestorangelover@gmail.com</a>.</p>
+
+    <p>If you are allowed but still seeing this page, try <strong>clearing your cache</strong> or using <strong>Incognito mode</strong>.</p>
   </main>
 
-  <footer id="contact">
+  <footer>
     &copy; 2025 Lee Family Press. All Rights Reserved.
   </footer>
 
-  <!-- IP display script -->
-<script>
-  const ipDisplay = document.createElement("div");
-  ipDisplay.style.marginTop = "2rem";
-  ipDisplay.style.fontSize = "1rem";
-  ipDisplay.style.color = "#aaa";
-  ipDisplay.style.textAlign = "center";
-  ipDisplay.innerHTML = "<em>Checking access...</em>";
-  document.body.appendChild(ipDisplay);
-
-  // Call the Worker endpoint to ask if allowed
-  fetch("https://leefamilypress.com/check-ip")
-    .then(res => res.json())
-    .then(result => {
-      if (result.allowed) {
-        ipDisplay.innerHTML = "<p>✅ Access granted</p>";
-        // Optionally redirect to main site
-        window.location.href = "https://leefamilypress.com/index.html";
-      } else {
-        ipDisplay.innerHTML = "<p>🚫 Access denied. You’re not on an approved IP.</p>";
-      }
-    })
-    .catch(() => {
-      ipDisplay.innerHTML = "<p style='color:red;'>Failed to check access.</p>";
-    });
-</script>
-
+  <script>
+    // Call your Cloudflare Worker endpoint
+    fetch("https://lee-family-ip-check.huyckkid14-projects.workers.dev/")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("client-ip").textContent = data.ip || "Unknown";
+        document.getElementById("allowed-status").textContent = data.allowed ? "✅ Allowed" : "🚫 Not Allowed";
+      })
+      .catch(() => {
+        document.getElementById("client-ip").textContent = "Error checking IP";
+        document.getElementById("allowed-status").textContent = "Error";
+      });
+  </script>
 </body>
 </html>
-
