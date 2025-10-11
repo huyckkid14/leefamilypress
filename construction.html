@@ -162,30 +162,32 @@
   </footer>
 
   <!-- IP display script -->
-  <script>
-    const allowedIP = "68.40.60.252"; // your real allowed IP
-    const ipDisplay = document.createElement("div");
-    ipDisplay.style.marginTop = "2rem";
-    ipDisplay.style.fontSize = "1rem";
-    ipDisplay.style.color = "#aaa";
-    ipDisplay.style.textAlign = "center";
-    ipDisplay.innerHTML = "<em>Checking IP...</em>";
-    document.body.appendChild(ipDisplay);
+<script>
+  const ipDisplay = document.createElement("div");
+  ipDisplay.style.marginTop = "2rem";
+  ipDisplay.style.fontSize = "1rem";
+  ipDisplay.style.color = "#aaa";
+  ipDisplay.style.textAlign = "center";
+  ipDisplay.innerHTML = "<em>Checking access...</em>";
+  document.body.appendChild(ipDisplay);
 
-    fetch("https://api.ipify.org?format=json")
-      .then(res => res.json())
-      .then(data => {
-        const currentIP = data.ip;
-        let status = currentIP === allowedIP ? "✅ Allowed" : "🚫 Not allowed";
-        ipDisplay.innerHTML = `
-          <p><strong>Your IP:</strong> ${currentIP}</p>
-          <p><strong>Allowed IP:</strong> ${allowedIP}</p>
-          <p>Status: ${status}</p>
-        `;
-      })
-      .catch(() => {
-        ipDisplay.innerHTML = "<p style='color:red;'>Failed to fetch IP.</p>";
-      });
-  </script>
+  // Call the Worker endpoint to ask if allowed
+  fetch("https://leefamilypress.com/check-ip")
+    .then(res => res.json())
+    .then(result => {
+      if (result.allowed) {
+        ipDisplay.innerHTML = "<p>✅ Access granted</p>";
+        // Optionally redirect to main site
+        window.location.href = "https://leefamilypress.com/index.html";
+      } else {
+        ipDisplay.innerHTML = "<p>🚫 Access denied. You’re not on an approved IP.</p>";
+      }
+    })
+    .catch(() => {
+      ipDisplay.innerHTML = "<p style='color:red;'>Failed to check access.</p>";
+    });
+</script>
+
 </body>
 </html>
+
