@@ -12,43 +12,54 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Find and Clean ROBUST Duplicate Styles
+      - name: Find and Clean ROBUST Duplicate Styles (Flexible Match)
         id: cleanup_step_robust
         run: |
           set -e
           TOTAL_REMOVED=0
+          echo "Starting flexible duplicate cleanup..."
 
-          PATTERN_SOURCE='<style>.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  top: 100%;  right: 0;  left: auto;  background: #222;  padding: 0.5rem 0;  border-radius: 6px;  box-shadow: 0 4px 8px rgba(0,0,0,0.3);  min-width: 180px;  z-index: 1000;}.dropdown-content a {  display: block;  padding: 0.5rem 1rem;  color: #ddd;  text-decoration: none;  transition: background 0.3s, color 0.3s;}.dropdown-content a:hover {  background: #333;  color: #ff6600;}.dropdown:hover .dropdown-content {  display: block;}</style>'
-          FULL_SIGNATURE=$(echo "$PATTERN_SOURCE" | tr -d '[:space:]')
+          # Find all .html files recursively
+          find . -name "*.html" -type f -print0 | while IFS= read -r -d '' HTML_FILE; do
 
-          echo "Starting robust duplicate style cleanup..."
-          while IFS= read -r -d '' HTML_FILE; do
+            # Use Perl to identify and remove duplicate <style> blocks
             perl -0777 -pe '
-              BEGIN {
-                $sig = $ENV{"FULL_SIGNATURE"};
-                our %seen = ();
-                our $removed = 0;
-              }
+              BEGIN { our %seen; our $removed = 0; }
+
               s{
-                (<style\b[^>]*>.*?</style>)
+                (<style\b[^>]*>.*?</style>)  # Capture <style>...</style> blocks
               }{
                 my $block = $1;
-                (my $norm = $block) =~ s/\s+//g;
-                if ($norm eq $sig) {
-                  if (!$seen{$sig}++) { $block }
-                  else { $removed++; "" }
-                } else { $block }
-              }egsx;
-              END { print STDERR "::notice ::Removed $removed duplicate dropdown style block(s)\n"; }
-            ' -- "$HTML_FILE" > "$HTML_FILE.tmp"
+                my $norm = $block;
+                $norm =~ s/\s+/ /g;   # normalize whitespace for comparison
 
+                # Detect dropdown style blocks loosely (contains both .dropdown and .dropdown-content)
+                if ($norm =~ /\.dropdown\s*\{.*?display:\s*inline-block;.*?\}\s*\.dropdown-content/s) {
+                  my $sig = "dropdown_signature";
+                  if (!$seen{$sig}++) {
+                    $block   # keep the first
+                  } else {
+                    $removed++;
+                    ""       # remove duplicates
+                  }
+                } else {
+                  $block     # keep non-dropdown styles
+                }
+              }egsx;
+
+              END {
+                print STDERR "::notice ::Removed $removed duplicate dropdown style block(s)\n";
+              }
+            ' "$HTML_FILE" > "$HTML_FILE.tmp"
+
+            # Replace file only if changed
             if ! cmp -s "$HTML_FILE" "$HTML_FILE.tmp"; then
               mv "$HTML_FILE.tmp" "$HTML_FILE"
-              echo "::notice file=${HTML_FILE}::Processed file using robust multi-line cleanup."
+              echo "::notice file=${HTML_FILE}::Processed and cleaned."
               TOTAL_REMOVED=1
             else
               rm -f "$HTML_FILE.tmp"
             fi
-          done < <(find . -name "*.html" -type f -print0)
+          done
 
           echo "total_removed=${TOTAL_REMOVED}" >> "$GITHUB_OUTPUT"
