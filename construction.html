@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -93,545 +92,67 @@
       width: 100%;
       margin-top: auto;
     }
+
+    /* Dropdown styles */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: auto;
+      background: #222;
+      padding: 0.5rem 0;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      min-width: 180px;
+      z-index: 1000;
+    }
+    .dropdown-content a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #ddd;
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .dropdown-content a:hover {
+      background: #333;
+      color: #ff6600;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <header>
-  <h1>Lee Family Press</h1>
-  <nav>
-    <a href="https://leefamilypress.com/index.html">Home</a>
-    <a href="https://leefamilypress.com/works.html">Works</a>
-    <a href="https://leefamilypress.com/contact.html">Contact</a>
-    <div class="dropdown">
-      <a href="#">Authors ▾</a>
-      <div class="dropdown-content">
-        <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
-        <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
+    <h1>Lee Family Press</h1>
+    <nav>
+      <a href="https://leefamilypress.com/index.html">Home</a>
+      <a href="https://leefamilypress.com/works.html">Works</a>
+      <a href="https://leefamilypress.com/contact.html">Contact</a>
+      <div class="dropdown">
+        <a href="#">Authors ▾</a>
+        <div class="dropdown-content">
+          <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
+          <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
+        </div>
       </div>
-    </div>
-  </nav>
-</header>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
+    </nav>
+  </header>
 
   <main>
     <h2>🚧 Construction 🚧</h2>
     <p>Sorry, <strong>Lee Family Press</strong> is currently under construction.<br>
     Please try again later.</p>
-    <p>Reasons why you might get this page:<br>
-    <ul>
-    	<li>You are logged in on an IP adress that the developer did not approve for testing</li>
-        <li>You accidentally navigated to this page manually. In this case, you can <a href="/">return to home.</a></li>
-    <ul>
-    </p>
+    <p>Reasons why you might get this page:</p>
+    <ul style="list-style: none; padding: 0;">
+      <li>You are logged in on an IP address that the developer did not approve for testing</li>
+      <li>You accidentally navigated to this page manually. In this case, you can <a href="/">return to home.</a></li>
+    </ul>
     <p>For more details, please contact the developer at<br>
     <a href="mailto:bestorangelover@gmail.com">bestorangelover@gmail.com</a>.</p>
   </main>
@@ -639,5 +160,32 @@
   <footer id="contact">
     &copy; 2025 Lee Family Press. All Rights Reserved.
   </footer>
+
+  <!-- IP display script -->
+  <script>
+    const allowedIP = "68.40.60.252"; // your real allowed IP
+    const ipDisplay = document.createElement("div");
+    ipDisplay.style.marginTop = "2rem";
+    ipDisplay.style.fontSize = "1rem";
+    ipDisplay.style.color = "#aaa";
+    ipDisplay.style.textAlign = "center";
+    ipDisplay.innerHTML = "<em>Checking IP...</em>";
+    document.body.appendChild(ipDisplay);
+
+    fetch("https://api.ipify.org?format=json")
+      .then(res => res.json())
+      .then(data => {
+        const currentIP = data.ip;
+        let status = currentIP === allowedIP ? "✅ Allowed" : "🚫 Not allowed";
+        ipDisplay.innerHTML = `
+          <p><strong>Your IP:</strong> ${currentIP}</p>
+          <p><strong>Allowed IP:</strong> ${allowedIP}</p>
+          <p>Status: ${status}</p>
+        `;
+      })
+      .catch(() => {
+        ipDisplay.innerHTML = "<p style='color:red;'>Failed to fetch IP.</p>";
+      });
+  </script>
 </body>
 </html>
