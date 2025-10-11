@@ -1,37 +1,50 @@
-- name: Find and Clean ROBUST Duplicate Styles
-  id: cleanup_step_robust
-  run: |
-    TOTAL_REMOVED=0
-    
-    # 1. Define the CLEAN (whitespace-stripped) content of the dropdown block.
-    # This uses the full, compressed pattern as the source:
-    PATTERN_SOURCE='<style>.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  top: 100%;  right: 0;  left: auto;  background: #222;  padding: 0.5rem 0;  border-radius: 6px;  box-shadow: 0 4px 8px rgba(0,0,0,0.3);  min-width: 180px;  z-index: 1000;}.dropdown-content a {  display: block;  padding: 0.5rem 1rem;  color: #ddd;  text-decoration: none;  transition: background 0.3s, color 0.3s;}.dropdown-content a:hover {  background: #333;  color: #ff6600;}.dropdown:hover .dropdown-content {  display: block;}</style>'
-    
-    FULL_SIGNATURE=$(echo "$PATTERN_SOURCE" | tr -d '[:space:]')
-    echo "Starting robust duplicate style cleanup..."
-    
-    find . -name "*.html" -type f | while IFS= read -r HTML_FILE; do
-        CLEANED_OUTPUT=$(awk -v sig="$FULL_SIGNATURE" '
-        BEGIN { RS="<style>"; ORS=""; kept_count=0; }
-        {
-            original_block = $0;
-            cleaned_block = $0;
-            gsub(/[[:space:]]/, "", cleaned_block);
-            if (cleaned_block == sig) {
-                if (kept_count == 0) {
-                    print "<style>" original_block;
-                    kept_count = 1;
-                } else {
-                    deleted_count++;
-                }
-            } else {
-                print "<style>" original_block;
-            }
-        }' "$HTML_FILE")
+name: Remove Duplicate Dropdown Styles
 
-        echo "$CLEANED_OUTPUT" > "$HTML_FILE"
-        echo "::notice file=${HTML_FILE}::Processed file using robust multi-line cleanup."
-        TOTAL_REMOVED=1
-    done
-    
-    echo "total_removed=${TOTAL_REMOVED}" >> "$GITHUB_OUTPUT"
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find and Clean ROBUST Duplicate Styles
+        id: cleanup_step_robust
+        run: |
+          TOTAL_REMOVED=0
+          
+          # 1. Define the CLEAN (whitespace-stripped) content of the dropdown block.
+          PATTERN_SOURCE='<style>.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  top: 100%;  right: 0;  left: auto;  background: #222;  padding: 0.5rem 0;  border-radius: 6px;  box-shadow: 0 4px 8px rgba(0,0,0,0.3);  min-width: 180px;  z-index: 1000;}.dropdown-content a {  display: block;  padding: 0.5rem 1rem;  color: #ddd;  text-decoration: none;  transition: background 0.3s, color 0.3s;}.dropdown-content a:hover {  background: #333;  color: #ff6600;}.dropdown:hover .dropdown-content {  display: block;}</style>'
+          
+          FULL_SIGNATURE=$(echo "$PATTERN_SOURCE" | tr -d '[:space:]')
+          echo "Starting robust duplicate style cleanup..."
+          
+          find . -name "*.html" -type f | while IFS= read -r HTML_FILE; do
+              CLEANED_OUTPUT=$(awk -v sig="$FULL_SIGNATURE" '
+              BEGIN { RS="<style>"; ORS=""; kept_count=0; }
+              {
+                  original_block = $0;
+                  cleaned_block = $0;
+                  gsub(/[[:space:]]/, "", cleaned_block);
+                  if (cleaned_block == sig) {
+                      if (kept_count == 0) {
+                          print "<style>" original_block;
+                          kept_count = 1;
+                      } else {
+                          deleted_count++;
+                      }
+                  } else {
+                      print "<style>" original_block;
+                  }
+              }' "$HTML_FILE")
+
+              echo "$CLEANED_OUTPUT" > "$HTML_FILE"
+              echo "::notice file=${HTML_FILE}::Processed file using robust multi-line cleanup."
+              TOTAL_REMOVED=1
+          done
+          
+          echo "total_removed=${TOTAL_REMOVED}" >> "$GITHUB_OUTPUT"
