@@ -73,6 +73,38 @@
     font-size: 0.9rem;
     color: #666;
   }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    background: #222;
+    padding: 0.5rem 0;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    min-width: 180px;
+    z-index: 1000;
+  }
+  .dropdown-content a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #ddd;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+  }
+  .dropdown-content a:hover {
+    background: #333;
+    color: #ff6600;
+  }
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -93,72 +125,22 @@
   </nav>
 </header>
 
-<style>
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: auto;
-  background: #222;
-  padding: 0.5rem 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  min-width: 180px;
-  z-index: 1000;
-}
-.dropdown-content a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.3s, color 0.3s;
-}
-.dropdown-content a:hover {
-  background: #333;
-  color: #ff6600;
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <section class="content-section">
   <h2>Privacy Policy</h2>
 
-  <p><strong>Effective immediately</strong></p>
+  <p><strong>Last updated:</strong> October 11, 2025 — 16:11 PM</p>
 
   <p>Lee Family Press (“we,” “us,” or “our”) is committed to protecting your privacy and maintaining transparency about how we handle your information. This Privacy Policy (“Policy”) explains how we collect, use, and protect information you provide through our website.</p>
 
   <h3>I. Information We Collect</h3>
+  <p>This includes information you voluntarily provide, as well as certain technical data collected automatically for security and performance purposes.</p>
   <p>We only collect information that you voluntarily provide through our contact forms. This may include your name, email address, and the message you send us. We do not collect any other personal information such as addresses, phone numbers, or payment details.</p>
   <p>Our website may also collect limited non-personal information such as general traffic statistics or cookie data for functionality purposes, but no data is used to personally identify you.</p>
+
+  <h3>IA. IP Address Collection and Cloudflare Services</h3>
+  <p>When you visit or are redirected to <code>/construction.html</code>, your IP address is automatically collected and processed through Cloudflare’s security and access verification services. This process ensures that only authorized visitors can access the site during maintenance or restricted access periods.</p>
+  <p>Your IP address is transmitted to Cloudflare’s network to verify access eligibility and to enhance protection against unauthorized or malicious activity. We do not store or use this information for any other purpose.</p>
+  <p>Cloudflare acts as our security and performance provider. All IP data processed through their system is handled in accordance with <a href="https://www.cloudflare.com/privacypolicy/" style="color:#ffaa00;">Cloudflare’s Privacy Policy</a>.</p>
 
   <h3>II. How We Use Information</h3>
   <p>We use the information you submit solely to respond to your inquiries and communicate with you if you have requested a reply. We do not use your information for marketing emails.</p>
@@ -193,5 +175,9 @@
   <p>© 2025 Lee Family Press. All Rights Reserved.</p>
 </footer>
 
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" 
+integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" 
+data-cf-beacon='{"version":"2024.11.0","token":"bb6c99401f9a42c1b7996ad8f27fa4d4"}' crossorigin="anonymous"></script>
 </body>
 </html>
