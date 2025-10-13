@@ -1,23 +1,45 @@
-name: Remove Duplicate Dropdown Styles
+name: Replace Header and Remove Duplicate Styles
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # allows manual run from Actions tab
+  workflow_dispatch:
 
 jobs:
-  cleanup:
+  replace-and-clean:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 1️⃣ Replace <header> tags once per file
+      - name: Replace <header> with header.html (once per file)
+        run: |
+          echo "🔄 Replacing <header> with header.html..."
+          find . -type f -name "*.html" | while read file; do
+            sed -i '0,/<header>/s//header.html/' "$file"
+          done
+          echo "✅ Replacement complete."
+
+      # 2️⃣ Commit the header replacement
+      - name: Commit and push header replacements
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git diff --cached --quiet && echo "No header changes to commit." || (
+            git commit -m "🔄 Replace <header> tags with header.html (once per file)"
+            git push
+          )
+
+      # 3️⃣ Remove duplicate dropdown styles
       - name: Find and Clean ROBUST Duplicate Styles (Flexible Match)
         id: cleanup_step_robust
         run: |
           set -e
           TOTAL_REMOVED=0
-          echo "Starting flexible duplicate cleanup..."
+          echo "🧹 Starting flexible duplicate cleanup..."
 
           # Find all .html files recursively
           find . -name "*.html" -type f -print0 | while IFS= read -r -d '' HTML_FILE; do
@@ -59,7 +81,9 @@ jobs:
           done
 
           echo "total_removed=${TOTAL_REMOVED}" >> "$GITHUB_OUTPUT"
+          echo "✅ Cleanup complete."
 
+      # 4️⃣ Commit and push cleanup changes
       - name: Commit and push cleanup
         if: success()
         run: |
@@ -67,8 +91,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No cleanup changes to commit."
           else
-            git commit -m "🧹 Auto-clean duplicate dropdown styles"
+            git commit -m "🧹 Auto-clean duplicate dropdown styles after header replacement"
             git push
           fi
