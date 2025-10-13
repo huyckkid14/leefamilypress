@@ -13,14 +13,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1️⃣ Replace <header> tags once per file
-      - name: Replace <header> with header.html (once per file)
+      # 1️⃣ Replace the first <header>...</header> block with contents of header.html
+      - name: Replace <header> block with header.html content (once per file)
         run: |
-          echo "🔄 Replacing <header> with header.html..."
-          find . -type f -name "*.html" | while read file; do
-            sed -i '0,/<header>/s//header.html/' "$file"
+          echo "🔄 Replacing <header>...</header> with header.html content..."
+          for file in $(find . -type f -name "*.html"); do
+            if grep -q "<header" "$file"; then
+              # Only replace the FIRST <header>...</header> block
+              awk -v rfile="header.html" '
+                BEGIN { replaced = 0; while ((getline line < rfile) > 0) headerContent = headerContent line "\n"; close(rfile); }
+                {
+                  if (!replaced && match($0, /<header[^>]*>/)) {
+                    print headerContent;
+                    inHeader = 1;
+                    replaced = 1;
+                    next;
+                  }
+                  if (inHeader && match($0, /<\/header>/)) {
+                    inHeader = 0;
+                    next;
+                  }
+                  if (!inHeader) print $0;
+                }
+              ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+              echo "::notice file=$file::Header replaced."
+            fi
           done
-          echo "✅ Replacement complete."
+          echo "✅ Header replacement complete."
 
       # 2️⃣ Commit the header replacement
       - name: Commit and push header replacements
@@ -29,11 +48,11 @@ jobs:
           git config user.email "github-actions@github.com"
           git add .
           git diff --cached --quiet && echo "No header changes to commit." || (
-            git commit -m "🔄 Replace <header> tags with header.html (once per file)"
+            git commit -m "🔄 Replace <header> with header.html contents (once per file)"
             git push
           )
 
-      # 3️⃣ Remove duplicate dropdown styles
+      # 3️⃣ Remove duplicate dropdown styles (same logic you wrote)
       - name: Find and Clean ROBUST Duplicate Styles (Flexible Match)
         id: cleanup_step_robust
         run: |
@@ -41,30 +60,27 @@ jobs:
           TOTAL_REMOVED=0
           echo "🧹 Starting flexible duplicate cleanup..."
 
-          # Find all .html files recursively
           find . -name "*.html" -type f -print0 | while IFS= read -r -d '' HTML_FILE; do
             perl -0777 -pe '
               BEGIN { our %seen; our $removed = 0; }
 
-              # Capture all <style>...</style> blocks
               s{
                 (<style\b[^>]*>.*?</style>)
               }{
                 my $block = $1;
                 my $norm = $block;
-                $norm =~ s/\s+/ /g;   # normalize whitespace
+                $norm =~ s/\s+/ /g;
 
-                # Detect dropdown style blocks loosely (both .dropdown and .dropdown-content)
                 if ($norm =~ /\.dropdown\s*\{.*?display:\s*inline-block;.*?\}\s*\.dropdown-content/s) {
                   my $sig = "dropdown_signature";
                   if (!$seen{$sig}++) {
-                    $block   # keep first one
+                    $block
                   } else {
                     $removed++;
-                    ""       # delete duplicates
+                    ""
                   }
                 } else {
-                  $block     # keep all non-dropdown styles
+                  $block
                 }
               }egsx;
 
