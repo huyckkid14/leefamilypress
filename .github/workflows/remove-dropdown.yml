@@ -112,3 +112,22 @@ jobs:
             git commit -m "🧹 Auto-clean duplicate dropdown styles after header replacement"
             git push
           fi
+      # 5️⃣ Remove excessive blank lines (more than 4 consecutive)
+      - name: Remove excessive blank lines (>4)
+        run: |
+          echo "🧽 Removing long blank line streaks..."
+          find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
+            perl -0777 -pe '
+              # Replace more than 4 consecutive newlines with exactly 1 newline
+              s/\n{5,}/\n/g;
+            ' "$FILE" > "$FILE.tmp"
+            
+            if ! cmp -s "$FILE" "$FILE.tmp"; then
+              mv "$FILE.tmp" "$FILE"
+              echo "::notice file=${FILE}::Removed excessive blank lines."
+            else
+              rm -f "$FILE.tmp"
+            fi
+          done
+          echo "✅ Blank line cleanup complete."
+
