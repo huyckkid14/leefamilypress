@@ -116,7 +116,13 @@ jobs:
       - name: Remove excessive blank lines (>4) and hidden characters
         run: |
           echo "🧽 Removing long blank line streaks and hidden whitespace..."
+          FILECOUNT=0
           find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
+            FILECOUNT=$((FILECOUNT+1))
+            echo "🔧 [${FILECOUNT}] Attempting to edit: $FILE"
+            FILESIZE=$(stat -c%s "$FILE" 2>/dev/null || echo 0)
+            echo "   └─ Size: ${FILESIZE} bytes"
+
             perl -CSD -0777 -pe '
               # Normalize all line endings
               s/\r\n/\n/g;
@@ -127,31 +133,33 @@ jobs:
               s/\x{2029}/\n/g;
 
               # Remove zero-width and BOM characters
-              s/\x{200B}//g;   # zero-width space
-              s/\x{FEFF}//g;   # BOM
+              s/\x{200B}//g;
+              s/\x{FEFF}//g;
 
               # Convert non-breaking spaces to normal space
               s/\x{00A0}/ /g;
 
-              # Remove empty HTML comments that appear as "blank" lines (e.g. <!---->, <!--   -->)
+              # Remove empty HTML comments (e.g. <!---->)
               s/^\s*<!--\s*-->\s*\n?//gm;
               s/^\s*<!-+>\s*\n?//gm;
 
-              # Remove lines that contain only spaces or tabs (NBSPs already converted)
+              # Remove lines that contain only spaces or tabs
               s/^[ \t]*\n/\n/gm;
 
-              # Collapse any long run of newlines (5 or more) into a single newline
+              # Collapse any long run of newlines (5+)
               s/\n{5,}/\n/g;
             ' "$FILE" > "$FILE.tmp"
 
             if ! cmp -s "$FILE" "$FILE.tmp"; then
               mv "$FILE.tmp" "$FILE"
-              echo "::notice file=${FILE}::Removed excessive/hidden blank lines."
+              echo "✅ Edited: $FILE"
             else
               rm -f "$FILE.tmp"
+              echo "⚪ No changes needed: $FILE"
             fi
           done
           echo "✅ Blank line & hidden whitespace cleanup complete."
+
 
 
 
