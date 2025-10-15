@@ -112,33 +112,60 @@ jobs:
             git commit -m "🧹 Auto-clean duplicate dropdown styles after header replacement"
             git push
           fi
-      # 5️⃣ Remove excessive blank lines (more than 4 consecutive)
-      - name: Remove excessive blank lines (>4)
+      # 5️⃣ Remove excessive blank lines and hidden whitespace (robust)
+      - name: Remove excessive blank lines (>4) and hidden characters
         run: |
-          echo "🧽 Removing long blank line streaks..."
+          echo "🧽 Removing long blank line streaks and hidden whitespace..."
           find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
-            perl -0777 -pe '
-              # Normalize all line endings:
-              # 1. Convert CRLF (\r\n) → LF
-              # 2. Convert lone CR (\r) → LF
+            perl -CSD -0777 -pe '
+              # Normalize all line endings
               s/\r\n/\n/g;
               s/\r/\n/g;
 
-              # Remove lines that contain only spaces or tabs
+              # Convert Unicode separators to newline
+              s/\x{2028}/\n/g;
+              s/\x{2029}/\n/g;
+
+              # Remove zero-width and BOM characters
+              s/\x{200B}//g;   # zero-width space
+              s/\x{FEFF}//g;   # BOM
+
+              # Convert non-breaking spaces to normal space
+              s/\x{00A0}/ /g;
+
+              # Remove empty HTML comments that appear as "blank" lines (e.g. <!---->, <!--   -->)
+              s/^\s*<!--\s*-->\s*\n?//gm;
+              s/^\s*<!-+>\s*\n?//gm;
+
+              # Remove lines that contain only spaces or tabs (NBSPs already converted)
               s/^[ \t]*\n/\n/gm;
 
-              # Collapse 5 or more newlines into just one
+              # Collapse any long run of newlines (5 or more) into a single newline
               s/\n{5,}/\n/g;
             ' "$FILE" > "$FILE.tmp"
 
             if ! cmp -s "$FILE" "$FILE.tmp"; then
               mv "$FILE.tmp" "$FILE"
-              echo "::notice file=${FILE}::Removed excessive blank lines."
+              echo "::notice file=${FILE}::Removed excessive/hidden blank lines."
             else
               rm -f "$FILE.tmp"
             fi
           done
-          echo "✅ Blank line cleanup complete."
+          echo "✅ Blank line & hidden whitespace cleanup complete."
 
 
+
+      # 6️⃣ Commit and push blank line removal changes
+      - name: Commit and push blank line cleanup
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --cached --quiet; then
+            echo "No blank line cleanup changes to commit."
+          else
+            git commit -m "🧽 Remove excessive blank lines from HTML files"
+            git push
+          fi
 
