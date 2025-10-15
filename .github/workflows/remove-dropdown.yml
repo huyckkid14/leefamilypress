@@ -118,8 +118,11 @@ jobs:
           echo "🧽 Removing long blank line streaks..."
           find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
             perl -0777 -pe '
-              # Normalize line endings (convert Windows CRLF → LF)
+              # Normalize all line endings:
+              # 1. Convert CRLF (\r\n) → LF
+              # 2. Convert lone CR (\r) → LF
               s/\r\n/\n/g;
+              s/\r/\n/g;
 
               # Remove lines that contain only spaces or tabs
               s/^[ \t]*\n/\n/gm;
@@ -136,5 +139,6 @@ jobs:
             fi
           done
           echo "✅ Blank line cleanup complete."
+
 
 
