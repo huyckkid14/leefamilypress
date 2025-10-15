@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirect Notice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fafafa;
+      color: #333;
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    h1 {
+      color: #e67e22;
+    }
+
+    .box {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      display: inline-block;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 15px 0;
+    }
+
+    a.button {
+      display: inline-block;
+      background-color: #e67e22;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin: 10px;
+      font-weight: bold;
+    }
+
+    a.button:hover {
+      background-color: #cf711f;
+    }
+
+    #countdown {
+      font-weight: bold;
+      color: #e67e22;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Redirect notice</h1>
+    <p>You are leaving <strong>leefamilypress.com</strong> and are going to <span id="link-display"></span>.</p>
+    <p>Please remember that we will not be responsible for any data transferred during your interaction with the external site.</p>
+    <p>You will be redirected in <span id="countdown">5</span> seconds.</p>
+    <div>
+      <a id="continue" class="button" href="#">Continue</a>
+      <a id="goback" class="button" href="javascript:history.back()">Go Back</a>
+    </div>
+  </div>
+
+  <script>
+    // Get target URL from query parameter
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get('to');
+
+    if (!target) {
+      document.getElementById('link-display').textContent = 'an unknown site';
+      document.getElementById('continue').style.display = 'none';
+    } else {
+      document.getElementById('link-display').textContent = target;
+      document.getElementById('continue').href = target;
+    }
+
+    // Countdown timer
+    let count = 5;
+    const countdownElement = document.getElementById('countdown');
+
+    const timer = setInterval(() => {
+      count--;
+      countdownElement.textContent = count;
+      if (count <= 0 && target) {
+        clearInterval(timer);
+        window.location.href = target;
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
