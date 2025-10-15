@@ -112,10 +112,12 @@ jobs:
             git commit -m "🧹 Auto-clean duplicate dropdown styles after header replacement"
             git push
           fi
-      # 5️⃣ Remove excessive blank lines and hidden whitespace (robust + timeout)
+      # 5️⃣ Remove excessive blank lines and hidden whitespace (robust + timeout + safe continue)
       - name: Remove excessive blank lines (>4) and hidden characters
         run: |
           echo "🧽 Removing long blank line streaks and hidden whitespace..."
+          set +e  # continue even if a file fails or times out
+
           find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
             echo "🔧 Attempting to edit: $FILE"
             SIZE=$(stat -c%s "$FILE" || echo "unknown")
@@ -152,7 +154,11 @@ jobs:
 
             # Handle timeout (exit code 124)
             if [ $EXITCODE -eq 124 ]; then
-              echo "⏰ Timed out after 10 seconds — skipping $FILE"
+              echo "⚠️  File $FILE canceled — took more than 10 seconds (timeout). Skipped."
+              rm -f "$FILE.tmp"
+              continue
+            elif [ $EXITCODE -ne 0 ]; then
+              echo "❌ Error occurred while editing $FILE (exit code $EXITCODE). Skipped."
               rm -f "$FILE.tmp"
               continue
             fi
@@ -166,6 +172,7 @@ jobs:
               echo "ℹ️  No changes needed: $FILE"
             fi
           done
+
           echo "✅ Blank line & hidden whitespace cleanup complete."
 
 
