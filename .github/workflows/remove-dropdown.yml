@@ -1,7 +1,7 @@
 name: Replace All Headers
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -16,9 +16,7 @@ jobs:
         run: |
           set -e
 
-          # FIX: Using Heredoc (<< EOF_HEADER) for robust multi-line variable definition
-          read -r -d '' new_header << 'EOF_HEADER'
-<header>
+          new_header='<header>
 <h1>Lee Family Press</h1>
 <nav>
 <a href="https://leefamilypress.com/index.html">Home</a>
@@ -32,11 +30,9 @@ jobs:
 </div>
 </div>
 </nav>
-</header>
-EOF_HEADER
+</header>'
 
-          read -r -d '' style_block << 'EOF_STYLE'
-<style>
+          style_block='<style>
 .dropdown {
   position: relative;
   display: inline-block;
@@ -68,8 +64,7 @@ EOF_HEADER
 .dropdown:hover .dropdown-content {
   display: block;
 }
-</style>
-EOF_STYLE
+</style>'
 
           # Replace headers safely
           find . -type f -name "*.html" -not -path "./.git/*" | while read -r file; do
@@ -86,14 +81,8 @@ EOF_STYLE
             # Insert style only if not already there
             if ! grep -q "dropdown-content" "$file"; then
               if grep -q "</head>" "$file"; then
-                # Best: Insert just before </head>
                 perl -0777 -i -pe "s|</head>|$style_block\n</head>|" "$file"
-              elif grep -q "<head>" "$file"; then
-                # Good Fallback: Insert after <head>
-                perl -0777 -i -pe "s|<head>|<head>\n$style_block\n|s" "$file"
               else
-                # Last Resort: Prepend to the file (Will be before <!DOCTYPE html>)
-                echo -e "⚠️ WARNING: No <head> or </head> found in $file. Prepended style."
                 echo -e "$style_block\n$(cat "$file")" > "$file"
               fi
             fi
@@ -110,23 +99,19 @@ EOF_STYLE
             git commit -m "Replace headers and ensure dropdown style"
             git push
           fi
-      
       # 9️⃣ Remove duplicate <script>...</script> blocks that handle notice closing
       - name: Remove duplicate notice-close <script> blocks
         run: |
-          # Reverted to set -e for better error handling (original had set +e)
-          set -e
+          set +e
           echo "🧹 Starting duplicate <script> cleanup for notice-close handler..."
           TOTAL_FILES=0
           TOTAL_DUPLICATES=0
           TOTAL_CHANGED=0
 
-          # Changed to safer processing with temporary file and using a loop that handles spaces
           find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
             ((TOTAL_FILES++))
             echo "🔍 Checking: $FILE"
 
-            # Perl script to remove duplicates (same as original, but using tmp file)
             perl -0777 -pe "
               BEGIN { our \$found = 0; our \$removed = 0; our \$log = \"\" }
               s{
@@ -183,6 +168,5 @@ EOF_STYLE
           fi
 
           git commit -m "🧹 Remove duplicate notice-close <script> blocks (auto)"
-          # Pull and push logic for a robust commit
           git pull --rebase origin "${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}" || true
           git push origin "HEAD:${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}"
