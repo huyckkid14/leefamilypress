@@ -266,7 +266,6 @@ jobs:
       # 9️⃣ Remove duplicate <script>...</script> blocks that handle notice closing
       - name: Remove duplicate notice-close <script> blocks
         run: |
-          set +e
           echo "🧹 Starting duplicate <script> cleanup for notice-close handler..."
           TOTAL_FILES=0
           TOTAL_DUPLICATES=0
@@ -276,43 +275,47 @@ jobs:
             ((TOTAL_FILES++))
             echo "🔍 Checking: $FILE"
 
-            perl -0777 -pe "
-              BEGIN { our \$found = 0; our \$removed = 0; our \$log = \"\" }
+            perl -0777 -pe '
+              BEGIN { our $found = 0; our $removed = 0; our $log = "" }
+
+              # Match multiline <script> blocks that attach the close-notice click event
               s{
-                (<script>\\s*document\\.getElementById\\(\"close-notice\"\\)\\.addEventListener\\([^<]*?</script>)
+                (<script>[\s\S]*?(document\.(getElementById|querySelector)\(["'\''"]#?close-notice["'\''"]\)[\s\S]*?</script>))
               }{
-                if (!\$found++) {
-                  \$log .= '::debug ::Keeping first close-notice script block\\n';
-                  \$1
+                if (!$found++) {
+                  $log .= "::debug ::Keeping first close-notice script block\n";
+                  $1
                 } else {
-                  \$removed++;
-                  \$log .= '::debug ::Removing duplicate close-notice script block #' . \$removed . '\\n';
-                  ''
+                  $removed++;
+                  $log .= "::debug ::Removing duplicate close-notice script block #" . $removed . "\n";
+                  ""
                 }
               }egsx;
-              END {
-                print STDERR '::notice ::File processed. Found ' . \$found . ' close-notice script(s), removed ' . \$removed . '.\\n';
-                print STDERR \$log if \$removed;
-              }
-            " "\$FILE" > "\$FILE.tmp"
 
-            if ! cmp -s "\$FILE" "\$FILE.tmp"; then
-              mv "\$FILE.tmp" "\$FILE"
+              END {
+                print STDERR "::notice ::File processed. Found " . $found . " close-notice script(s), removed " . $removed . ".\n";
+                print STDERR $log if $removed;
+              }
+            ' "$FILE" > "$FILE.tmp"
+
+            if ! cmp -s "$FILE" "$FILE.tmp"; then
+              mv "$FILE.tmp" "$FILE"
               ((TOTAL_DUPLICATES++))
               ((TOTAL_CHANGED++))
-              echo "✅ Cleaned \$FILE — duplicate close-notice script(s) removed."
+              echo "✅ Cleaned $FILE — duplicate close-notice script(s) removed."
             else
-              rm -f "\$FILE.tmp"
-              echo "ℹ️  No duplicates found in \$FILE"
+              rm -f "$FILE.tmp"
+              echo "ℹ️  No duplicates found in $FILE"
             fi
           done
 
           echo "--------------------------------------------"
           echo "🧾 Summary:"
-          echo "📁 Files checked: \$TOTAL_FILES"
-          echo "🗑️  Files cleaned: \$TOTAL_CHANGED"
-          echo "♻️  Total duplicate close-notice scripts removed: \$TOTAL_DUPLICATES"
+          echo "📁 Files checked: $TOTAL_FILES"
+          echo "🗑️  Files cleaned: $TOTAL_CHANGED"
+          echo "♻️  Total duplicate close-notice scripts removed: $TOTAL_DUPLICATES"
           echo "✅ Duplicate notice-close script cleanup complete."
+
 
       # 🔟 Commit and push duplicate script cleanup
       - name: Commit and push duplicate notice-close script cleanup
