@@ -241,4 +241,28 @@ jobs:
           echo "♻️  Total duplicate notice blocks removed: $TOTAL_DUPLICATES"
           echo "✅ Duplicate notice cleanup complete."
 
+      # 8️⃣ Commit and push duplicate notice cleanup
+      - name: Commit and push duplicate notice cleanup
+        run: |
+          git config --global safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "🧾 Git status before commit:"
+          git status --porcelain
+
+          # Stage only modified HTML files to be safe
+          git add '*.html' || true
+
+          if git diff --cached --quiet; then
+            echo "ℹ️  No duplicate notice changes to commit."
+            exit 0
+          fi
+
+          git commit -m "🧹 Remove duplicate <div class=\"notice\"> blocks (auto)"
+          # Rebase to avoid non-fast-forward errors on busy repos
+          git pull --rebase origin "${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}"
+
+
 
