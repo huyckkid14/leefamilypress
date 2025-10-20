@@ -193,6 +193,7 @@ jobs:
       # 7️⃣ Remove duplicate <div class="notice"> blocks (keep first, detailed logs)
       - name: Remove duplicate notice bars
         run: |
+          set +e   # <-- prevents job from failing on non-zero exit
           echo "🧹 Starting duplicate <div class=\"notice\"> cleanup with detailed logs..."
           TOTAL_FILES=0
           TOTAL_DUPLICATES=0
@@ -206,7 +207,7 @@ jobs:
             perl -0777 -pe '
               BEGIN { our $found = 0; our $removed = 0; our $log = "" }
               s{
-                (<div\s+class\s*=\s*["'\''"]notice["'\''"][^>]*>.*?</div>)
+                (<div\s+class\s*=\s*["'\''"]notice["'\'''][^>]*>.*?</div>)
               }{
                 if (!$found++) {
                   $log .= "::debug ::Keeping first notice block\n";
