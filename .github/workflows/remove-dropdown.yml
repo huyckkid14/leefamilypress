@@ -1,200 +1,109 @@
-name: Replace Header and Remove Duplicate Styles
+name: Replace All Headers
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
-  replace-and-clean:
+  replace-header:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 1️⃣ Replace the first <header>...</header> block with contents of header.html
-      - name: Replace <header> block with header.html content (once per file)
-        run: |
-          echo "🔄 Replacing <header>...</header> with header.html content..."
-          for file in $(find . -type f -name "*.html"); do
-            if grep -q "<header" "$file"; then
-              # Only replace the FIRST <header>...</header> block
-              awk -v rfile="header.html" '
-                BEGIN { replaced = 0; while ((getline line < rfile) > 0) headerContent = headerContent line "\n"; close(rfile); }
-                {
-                  if (!replaced && match($0, /<header[^>]*>/)) {
-                    print headerContent;
-                    inHeader = 1;
-                    replaced = 1;
-                    next;
-                  }
-                  if (inHeader && match($0, /<\/header>/)) {
-                    inHeader = 0;
-                    next;
-                  }
-                  if (!inHeader) print $0;
-                }
-              ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-              echo "::notice file=$file::Header replaced."
-            fi
-          done
-          echo "✅ Header replacement complete."
-
-      # 2️⃣ Commit the header replacement
-      - name: Commit and push header replacements
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add .
-          git diff --cached --quiet && echo "No header changes to commit." || (
-            git commit -m "🔄 Replace <header> with header.html contents (once per file)"
-            git push
-          )
-
-      # 3️⃣ Remove duplicate dropdown styles (same logic you wrote)
-      - name: Find and Clean ROBUST Duplicate Styles (Flexible Match)
-        id: cleanup_step_robust
+      - name: Replace headers and add style (non-repeating)
         run: |
           set -e
-          TOTAL_REMOVED=0
-          echo "🧹 Starting flexible duplicate cleanup..."
 
-          find . -name "*.html" -type f -print0 | while IFS= read -r -d '' HTML_FILE; do
-            perl -0777 -pe '
-              BEGIN { our %seen; our $removed = 0; }
+          new_header='<header>
+<h1>Lee Family Press</h1>
+<nav>
+<a href="https://leefamilypress.com/index.html">Home</a>
+<a href="https://leefamilypress.com/works.html">Works</a>
+<a href="https://leefamilypress.com/contact.html">Contact</a>
+<div class="dropdown">
+<a href="https://leefamilypress.com/index.html#">Authors ▾</a>
+<div class="dropdown-content">
+<a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
+<a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
+</div>
+</div>
+</nav>
+</header>'
 
-              s{
-                (<style\b[^>]*>.*?</style>)
-              }{
-                my $block = $1;
-                my $norm = $block;
-                $norm =~ s/\s+/ /g;
+          style_block='<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>'
 
-                if ($norm =~ /\.dropdown\s*\{.*?display:\s*inline-block;.*?\}\s*\.dropdown-content/s) {
-                  my $sig = "dropdown_signature";
-                  if (!$seen{$sig}++) {
-                    $block
-                  } else {
-                    $removed++;
-                    ""
-                  }
-                } else {
-                  $block
-                }
-              }egsx;
+          # Replace headers safely
+          find . -type f -name "*.html" -not -path "./.git/*" | while read -r file; do
+            echo "→ Processing $file"
 
-              END { print STDERR "::notice ::Removed $removed duplicate dropdown style block(s)\n"; }
-            ' "$HTML_FILE" > "$HTML_FILE.tmp"
+            # Only modify if file actually contains a header tag
+            if grep -q "<header" "$file"; then
+              cp "$file" "$file.bak"
 
-            if ! cmp -s "$HTML_FILE" "$HTML_FILE.tmp"; then
-              mv "$HTML_FILE.tmp" "$HTML_FILE"
-              echo "::notice file=${HTML_FILE}::Processed and cleaned."
-              TOTAL_REMOVED=1
-            else
-              rm -f "$HTML_FILE.tmp"
+              # Remove any duplicated header (if already replaced)
+              perl -0777 -i -pe "s|<header>.*?</header>|$new_header|gs" "$file"
+            fi
+
+            # Insert style only if not already there
+            if ! grep -q "dropdown-content" "$file"; then
+              if grep -q "</head>" "$file"; then
+                perl -0777 -i -pe "s|</head>|$style_block\n</head>|" "$file"
+              else
+                echo -e "$style_block\n$(cat "$file")" > "$file"
+              fi
             fi
           done
 
-          echo "total_removed=${TOTAL_REMOVED}" >> "$GITHUB_OUTPUT"
-          echo "✅ Cleanup complete."
-
-      # 4️⃣ Commit and push cleanup changes
-      - name: Commit and push cleanup
-        if: success()
+      - name: Commit and push if changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           if git diff --cached --quiet; then
-            echo "No cleanup changes to commit."
+            echo "✅ No changes."
           else
-            git commit -m "🧹 Auto-clean duplicate dropdown styles after header replacement"
+            git commit -m "Replace headers and ensure dropdown style"
             git push
           fi
-      # 5️⃣ Remove excessive blank lines and hidden whitespace (robust + timeout + safe continue)
-      - name: Remove excessive blank lines (>4) and hidden characters
-        run: |
-          echo "🧽 Removing long blank line streaks and hidden whitespace..."
-          set +e  # continue even if a file fails or times out
-
-          find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
-            echo "🔧 Attempting to edit: $FILE"
-            SIZE=$(stat -c%s "$FILE" || echo "unknown")
-            echo "   └─ Size: ${SIZE} bytes"
-
-            # Run Perl with a 10-second timeout
-            timeout 10s perl -CSD -0777 -pe '
-              # Normalize all line endings
-              s/\r\n/\n/g;
-              s/\r/\n/g;
-
-              # Convert Unicode separators to newline
-              s/\x{2028}/\n/g;
-              s/\x{2029}/\n/g;
-
-              # Remove zero-width and BOM characters
-              s/\x{200B}//g;
-              s/\x{FEFF}//g;
-
-              # Convert non-breaking spaces to normal space
-              s/\x{00A0}/ /g;
-
-              # Remove empty HTML comments that appear as "blank" lines (e.g. <!---->, <!--   -->)
-              s/^\s*<!--\s*-->\s*\n?//gm;
-              s/^\s*<!-+>\s*\n?//gm;
-
-              # Remove lines that contain only spaces or tabs (NBSPs already converted)
-              s/^[ \t]*\n/\n/gm;
-
-              # Collapse any long run of newlines (5 or more) into a single newline
-              s/\n{5,}/\n/g;
-            ' "$FILE" > "$FILE.tmp"
-            EXITCODE=$?
-
-            # Handle timeout (exit code 124)
-            if [ $EXITCODE -eq 124 ]; then
-              echo "⚠️  File $FILE canceled — took more than 10 seconds (timeout). Skipped."
-              rm -f "$FILE.tmp"
-              continue
-            elif [ $EXITCODE -ne 0 ]; then
-              echo "❌ Error occurred while editing $FILE (exit code $EXITCODE). Skipped."
-              rm -f "$FILE.tmp"
-              continue
-            fi
-
-            # Normal completion — check if file changed
-            if ! cmp -s "$FILE" "$FILE.tmp"; then
-              mv "$FILE.tmp" "$FILE"
-              echo "✅ Edited: $FILE"
-            else
-              rm -f "$FILE.tmp"
-              echo "ℹ️  No changes needed: $FILE"
-            fi
-          done
-
-          echo "✅ Blank line & hidden whitespace cleanup complete."
-
-
-
-      # 6️⃣ Commit and push blank line removal changes
-      - name: Commit and push blank line cleanup
-        if: success()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          if git diff --cached --quiet; then
-            echo "No blank line cleanup changes to commit."
-          else
-            git commit -m "🧽 Remove excessive blank lines from HTML files"
-            git push
-          fi
-      # 7️⃣ Remove duplicate <div class="notice"> blocks (keep first, detailed logs)
-      - name: Remove duplicate notice bars
+      # 9️⃣ Remove duplicate <script>...</script> blocks that handle notice closing
+      - name: Remove duplicate notice-close <script> blocks
         run: |
           set +e
-          echo "🧹 Starting duplicate <div class=\"notice\"> cleanup with detailed logs..."
+          echo "🧹 Starting duplicate <script> cleanup for notice-close handler..."
           TOTAL_FILES=0
           TOTAL_DUPLICATES=0
           TOTAL_CHANGED=0
@@ -206,45 +115,43 @@ jobs:
             perl -0777 -pe "
               BEGIN { our \$found = 0; our \$removed = 0; our \$log = \"\" }
               s{
-                (<div\\s+class\\s*=\\s*[\"']notice[\"'][^>]*>.*?</div>)
+                (<script>\\s*document\\.getElementById\\(\"close-notice\"\\)\\.addEventListener\\([^<]*?</script>)
               }{
                 if (!\$found++) {
-                  \$log .= '::debug ::Keeping first notice block\n';
+                  \$log .= '::debug ::Keeping first close-notice script block\\n';
                   \$1
                 } else {
                   \$removed++;
-                  \$log .= '::debug ::Removing duplicate notice block #' . \$removed . '\n';
+                  \$log .= '::debug ::Removing duplicate close-notice script block #' . \$removed . '\\n';
                   ''
                 }
               }egsx;
               END {
-                print STDERR '::notice ::File processed. Found ' . \$found . ' notice block(s), removed ' . \$removed . '.\n';
+                print STDERR '::notice ::File processed. Found ' . \$found . ' close-notice script(s), removed ' . \$removed . '.\\n';
                 print STDERR \$log if \$removed;
               }
-            " "$FILE" > "$FILE.tmp"
+            " "\$FILE" > "\$FILE.tmp"
 
-            if ! cmp -s "$FILE" "$FILE.tmp"; then
-              mv "$FILE.tmp" "$FILE"
+            if ! cmp -s "\$FILE" "\$FILE.tmp"; then
+              mv "\$FILE.tmp" "\$FILE"
               ((TOTAL_DUPLICATES++))
               ((TOTAL_CHANGED++))
-              echo "✅ Cleaned $FILE — duplicate notice(s) removed."
+              echo "✅ Cleaned \$FILE — duplicate close-notice script(s) removed."
             else
-              rm -f "$FILE.tmp"
-              echo "ℹ️  No duplicates found in $FILE"
+              rm -f "\$FILE.tmp"
+              echo "ℹ️  No duplicates found in \$FILE"
             fi
           done
 
           echo "--------------------------------------------"
           echo "🧾 Summary:"
-          echo "📁 Files checked: $TOTAL_FILES"
-          echo "🗑️  Files cleaned: $TOTAL_CHANGED"
-          echo "♻️  Total duplicate notice blocks removed: $TOTAL_DUPLICATES"
-          echo "✅ Duplicate notice cleanup complete."
+          echo "📁 Files checked: \$TOTAL_FILES"
+          echo "🗑️  Files cleaned: \$TOTAL_CHANGED"
+          echo "♻️  Total duplicate close-notice scripts removed: \$TOTAL_DUPLICATES"
+          echo "✅ Duplicate notice-close script cleanup complete."
 
-
-
-      # 8️⃣ Commit and push duplicate notice cleanup
-      - name: Commit and push duplicate notice cleanup
+      # 🔟 Commit and push duplicate script cleanup
+      - name: Commit and push duplicate notice-close script cleanup
         run: |
           git config --global safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
@@ -256,11 +163,11 @@ jobs:
           git add '*.html' || true
 
           if git diff --cached --quiet; then
-            echo "ℹ️  No duplicate notice changes to commit."
+            echo "ℹ️  No duplicate notice-close script changes to commit."
             exit 0
           fi
 
-          git commit -m "🧹 Remove duplicate <div class=\"notice\"> blocks (auto)"
+          git commit -m "🧹 Remove duplicate notice-close <script> blocks (auto)"
           git pull --rebase origin "${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}" || true
           git push origin "HEAD:${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}"
 
