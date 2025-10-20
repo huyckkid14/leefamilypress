@@ -155,6 +155,92 @@
   </nav>
 </header>
 
+<!-- 🔔 Privacy Policy Notice (outside header) -->
+<div class="notice" id="notice-bar">
+  <p>
+    We will update our privacy policy on <strong>October 25, 2025</strong>. 
+    Continued use after this date will indicate your agreement to our 
+    <a href="/new-privacy-policy">new policy</a>.
+  </p>
+  <button class="close-btn" id="close-notice">×</button>
+</div>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* 🔔 Notice styling */
+.notice {
+  background: #ffcc00;
+  color: #000;
+  text-align: center;
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+  font-weight: 500;
+  position: sticky;
+  top: 70px;
+  z-index: 999;
+}
+.notice a {
+  color: #000;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.notice .close-btn {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+}
+.notice .close-btn:hover {
+  color: #333;
+}
+</style>
+
+<script>
+document.getElementById("close-notice").addEventListener("click", function() {
+  const bar = document.getElementById("notice-bar");
+  bar.style.transition = "opacity 0.3s ease";
+  bar.style.opacity = "0";
+  setTimeout(() => bar.remove(), 300);
+});
+</script>
+
+
 <style>
 .dropdown {
   position: relative;
