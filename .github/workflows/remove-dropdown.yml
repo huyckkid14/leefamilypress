@@ -203,25 +203,25 @@ jobs:
             ((TOTAL_FILES++))
             echo "🔍 Checking: $FILE"
 
-            perl -0777 -pe <<'PERL' "$FILE" > "$FILE.tmp"
-BEGIN { our $found = 0; our $removed = 0; our $log = "" }
-s{
-  (<div\s+class\s*=\s*["']notice["'][^>]*>.*?</div>)
-}{
-  if (!$found++) {
-    $log .= "::debug ::Keeping first notice block\n";
-    $1
-  } else {
-    $removed++;
-    $log .= "::debug ::Removing duplicate notice block #" . $removed . "\n";
-    ""
-  }
-}egsx;
-END {
-  print STDERR "::notice ::File processed. Found $found notice block(s), removed $removed.\n";
-  print STDERR $log if $removed;
-}
-PERL
+            perl -0777 -pe '
+              BEGIN { our $found = 0; our $removed = 0; our $log = "" }
+              s{
+                (<div\s+class\s*=\s*["'\''"]notice["'\'''][^>]*>.*?</div>)
+              }{
+                if (!$found++) {
+                  $log .= "::debug ::Keeping first notice block\n";
+                  $1
+                } else {
+                  $removed++;
+                  $log .= "::debug ::Removing duplicate notice block #" . $removed . "\n";
+                  ""
+                }
+              }egsx;
+              END {
+                print STDERR "::notice ::File processed. Found $found notice block(s), removed $removed.\n";
+                print STDERR $log if $removed;
+              }
+            ' "$FILE" > "$FILE.tmp"
 
             if ! cmp -s "$FILE" "$FILE.tmp"; then
               mv "$FILE.tmp" "$FILE"
@@ -240,6 +240,7 @@ PERL
           echo "🗑️  Files cleaned: $TOTAL_CHANGED"
           echo "♻️  Total duplicate notice blocks removed: $TOTAL_DUPLICATES"
           echo "✅ Duplicate notice cleanup complete."
+
 
       # 8️⃣ Commit and push duplicate notice cleanup
       - name: Commit and push duplicate notice cleanup
