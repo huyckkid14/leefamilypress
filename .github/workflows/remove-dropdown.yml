@@ -330,23 +330,61 @@ jobs:
             echo "ℹ️  No duplicate notice-close script changes to commit."
             exit 0
           fi
-<style>
 
-
-/* 🔔 Notice styling */
-.notice {
-  background: #ffcc00;
-  color: #000;
-  text-align: center;
-  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-  font-weight: 500;
-  position: sticky;
-  top: 70px;
-  z-index: 999;
-}
           git commit -m "🧹 Remove duplicate notice-close <script> blocks (auto)"
           git pull --rebase origin "${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}" || true
           git push origin "HEAD:${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}"
+
+      # 1️⃣1️⃣ Remove duplicate .notice <style> blocks
+      - name: Remove duplicate notice style <style> blocks
+        run: |
+          echo "🧹 Starting duplicate <style> cleanup for .notice blocks..."
+          set +e
+          TOTAL_FILES=0
+          TOTAL_CHANGED=0
+          TOTAL_DUPLICATES=0
+
+          find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
+            ((TOTAL_FILES++))
+            echo "🔍 Checking: $FILE"
+
+            perl -0777 -pe '
+              BEGIN { our $found = 0; our $removed = 0 }
+
+              # Match <style> blocks containing ".notice {" to the closing </style>
+              s{
+                (<style>[\s\S]*?\.notice\s*\{[\s\S]*?</style>)
+              }{
+                if (!$found++) { $1 } else { $removed++; "" }
+              }egsx;
+
+              END { print STDERR "::notice ::File processed. Found $found notice style block(s), removed $removed.\n"; }
+            ' "$FILE" > "$FILE.tmp"
+
+            if [ $? -ne 0 ]; then
+              echo "❌ Perl regex error in $FILE"
+              rm -f "$FILE.tmp"
+              continue
+            fi
+
+            if ! cmp -s "$FILE" "$FILE.tmp"; then
+              mv "$FILE.tmp" "$FILE"
+              ((TOTAL_CHANGED++))
+              ((TOTAL_DUPLICATES++))
+              echo "✅ Cleaned $FILE — duplicate .notice style(s) removed."
+            else
+              rm -f "$FILE.tmp"
+              echo "ℹ️  No duplicate styles found in $FILE"
+            fi
+          done
+
+          echo "--------------------------------------------"
+          echo "🧾 Summary:"
+          echo "📁 Files checked: $TOTAL_FILES"
+          echo "🗑️  Files cleaned: $TOTAL_CHANGED"
+          echo "♻️  Total duplicate .notice styles removed: $TOTAL_DUPLICATES"
+          echo "✅ Duplicate notice-style cleanup complete."
+
 
       # 1️⃣2️⃣ Commit and push duplicate notice style cleanup
       - name: Commit and push duplicate notice style cleanup
