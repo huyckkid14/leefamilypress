@@ -267,28 +267,40 @@ jobs:
       - name: Remove duplicate notice-close <script> blocks
         run: |
           echo "🧹 Starting duplicate <script> cleanup for notice-close handler..."
-          set +e   # ← prevent pipeline exit on first error
+          set +e
           TOTAL_FILES=0
-          TOTAL_DUPLICATES=0
           TOTAL_CHANGED=0
+          TOTAL_DUPLICATES=0
 
           find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
             ((TOTAL_FILES++))
             echo "🔍 Checking: $FILE"
 
             perl -0777 -pe '
-              BEGIN { our $found = 0; our $removed = 0 }
+              BEGIN { our $found = 0; our $removed = 0; our $log = "" }
+
+              # Match any <script> block containing close-notice handler
               s{
-                (<script>[\s\S]*?(document\.(getElementById|querySelector)\(["'\''"]#?close-notice["'\''"]\)[\s\S]*?</script>))
+                (<script>[\s\S]*?(?:document\.(?:getElementById|querySelector)\(["'"'"']#?close-notice["'"'"']\)[\s\S]*?)</script>)
               }{
-                !$found++ ? $1 : (++$removed, "")
+                if (!$found++) {
+                  $log .= "::debug ::Keeping first close-notice script block\n";
+                  $1
+                } else {
+                  $removed++;
+                  $log .= "::debug ::Removing duplicate close-notice script block #" . $removed . "\n";
+                  ""
+                }
               }egsx;
-              END { print STDERR "::notice ::File processed. Found $found close-notice script(s), removed $removed.\n" }
+
+              END {
+                print STDERR "::notice ::File processed. Found " . $found . " close-notice script(s), removed " . $removed . ".\n";
+                print STDERR $log if $removed;
+              }
             ' "$FILE" > "$FILE.tmp"
 
-            # if Perl failed (bad regex etc.)
             if [ $? -ne 0 ]; then
-              echo "❌ Perl error in $FILE"
+              echo "❌ Perl regex error in $FILE"
               rm -f "$FILE.tmp"
               continue
             fi
@@ -297,7 +309,7 @@ jobs:
               mv "$FILE.tmp" "$FILE"
               ((TOTAL_CHANGED++))
               ((TOTAL_DUPLICATES++))
-              echo "✅ Cleaned $FILE — duplicate script(s) removed."
+              echo "✅ Cleaned $FILE — duplicate close-notice script(s) removed."
             else
               rm -f "$FILE.tmp"
               echo "ℹ️  No duplicates found in $FILE"
