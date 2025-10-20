@@ -277,26 +277,16 @@ jobs:
             echo "🔍 Checking: $FILE"
 
             perl -0777 -pe '
-              BEGIN { our $found = 0; our $removed = 0; our $log = "" }
+              BEGIN { our $found = 0; our $removed = 0 }
 
-              # Match any <script> block containing close-notice handler
+              # Simple pattern — matches any <script> ... close-notice ... </script>
               s{
-                (<script>[\s\S]*?(?:document\.(?:getElementById|querySelector)\(["'"'"']#?close-notice["'"'"']\)[\s\S]*?)</script>)
+                (<script>[\s\S]*?close-notice[\s\S]*?</script>)
               }{
-                if (!$found++) {
-                  $log .= "::debug ::Keeping first close-notice script block\n";
-                  $1
-                } else {
-                  $removed++;
-                  $log .= "::debug ::Removing duplicate close-notice script block #" . $removed . "\n";
-                  ""
-                }
+                if (!$found++) { $1 } else { $removed++; "" }
               }egsx;
 
-              END {
-                print STDERR "::notice ::File processed. Found " . $found . " close-notice script(s), removed " . $removed . ".\n";
-                print STDERR $log if $removed;
-              }
+              END { print STDERR "::notice ::File processed. Found $found close-notice script(s), removed $removed.\n"; }
             ' "$FILE" > "$FILE.tmp"
 
             if [ $? -ne 0 ]; then
