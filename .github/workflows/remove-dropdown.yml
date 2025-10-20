@@ -330,7 +330,42 @@ jobs:
             echo "ℹ️  No duplicate notice-close script changes to commit."
             exit 0
           fi
+<style>
 
+
+/* 🔔 Notice styling */
+.notice {
+  background: #ffcc00;
+  color: #000;
+  text-align: center;
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+  font-weight: 500;
+  position: sticky;
+  top: 70px;
+  z-index: 999;
+}
           git commit -m "🧹 Remove duplicate notice-close <script> blocks (auto)"
           git pull --rebase origin "${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}" || true
           git push origin "HEAD:${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}"
+
+      # 1️⃣2️⃣ Commit and push duplicate notice style cleanup
+      - name: Commit and push duplicate notice style cleanup
+        run: |
+          git config --global safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "🧾 Git status before commit:"
+          git status --porcelain
+
+          git add '*.html' || true
+
+          if git diff --cached --quiet; then
+            echo "ℹ️  No duplicate .notice style changes to commit."
+            exit 0
+          fi
+
+          git commit -m "🧹 Remove duplicate .notice <style> blocks (auto)"
+          git pull --rebase origin "${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}"
+
