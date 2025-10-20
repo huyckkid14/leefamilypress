@@ -193,36 +193,35 @@ jobs:
       # 7️⃣ Remove duplicate <div class="notice"> blocks (keep first, detailed logs)
       - name: Remove duplicate notice bars
         run: |
-          set +e   # <-- prevents job from failing on non-zero exit
+          set +e
           echo "🧹 Starting duplicate <div class=\"notice\"> cleanup with detailed logs..."
           TOTAL_FILES=0
           TOTAL_DUPLICATES=0
           TOTAL_CHANGED=0
 
           find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
-            FILE_DUPES=0
             ((TOTAL_FILES++))
             echo "🔍 Checking: $FILE"
 
-            perl -0777 -pe '
-              BEGIN { our $found = 0; our $removed = 0; our $log = "" }
-              s{
-                (<div\s+class\s*=\s*["'\''"]notice["'\'''][^>]*>.*?</div>)
-              }{
-                if (!$found++) {
-                  $log .= "::debug ::Keeping first notice block\n";
-                  $1
-                } else {
-                  $removed++;
-                  $log .= "::debug ::Removing duplicate notice block #" . $removed . "\n";
-                  ""
-                }
-              }egsx;
-              END { 
-                print STDERR "::notice ::File processed. Found $found notice block(s), removed $removed.\n"; 
-                print STDERR $log if $removed; 
-              }
-            ' "$FILE" > "$FILE.tmp"
+            perl -0777 -pe <<'PERL' "$FILE" > "$FILE.tmp"
+BEGIN { our $found = 0; our $removed = 0; our $log = "" }
+s{
+  (<div\s+class\s*=\s*["']notice["'][^>]*>.*?</div>)
+}{
+  if (!$found++) {
+    $log .= "::debug ::Keeping first notice block\n";
+    $1
+  } else {
+    $removed++;
+    $log .= "::debug ::Removing duplicate notice block #" . $removed . "\n";
+    ""
+  }
+}egsx;
+END {
+  print STDERR "::notice ::File processed. Found $found notice block(s), removed $removed.\n";
+  print STDERR $log if $removed;
+}
+PERL
 
             if ! cmp -s "$FILE" "$FILE.tmp"; then
               mv "$FILE.tmp" "$FILE"
@@ -252,7 +251,6 @@ jobs:
           echo "🧾 Git status before commit:"
           git status --porcelain
 
-          # Stage only modified HTML files to be safe
           git add '*.html' || true
 
           if git diff --cached --quiet; then
@@ -261,9 +259,6 @@ jobs:
           fi
 
           git commit -m "🧹 Remove duplicate <div class=\"notice\"> blocks (auto)"
-          # Rebase to avoid non-fast-forward errors on busy repos
           git pull --rebase origin "${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}" || true
           git push origin "HEAD:${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}"
-
-
 
