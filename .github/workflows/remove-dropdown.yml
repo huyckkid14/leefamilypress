@@ -1,7 +1,7 @@
 name: Replace All Headers
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -170,5 +170,3 @@ jobs:
           git commit -m "🧹 Remove duplicate notice-close <script> blocks (auto)"
           git pull --rebase origin "${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}" || true
           git push origin "HEAD:${GITHUB_REF_NAME:-$GITHUB_HEAD_REF}"
-
- 
