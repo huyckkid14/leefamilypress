@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Story Songs - Lee Family Press</title>
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #f0f0f0;
+      background: #1c1c1c;
+      overflow-x: hidden;
+    }
+    header {
+      position: fixed; top: 0; width: 100%;
+      padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(45deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    nav a {
+      color: #ddd; margin-left: 1.5rem;
+      text-decoration: none; transition: color 0.3s;
+    }
+    nav a:hover { color: #ff6600; }
+
+    .section { padding: 6rem 2rem 4rem; max-width: 1000px; margin: auto; }
+    .section h2 {
+      font-size: 2rem; margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ff6600, #ffaa00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .description {
+      font-size: 1rem; color: #ccc; line-height: 1.6; margin-bottom: 2rem;
+    }
+    .works-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;
+    }
+    .song {
+      background: #222; padding: 1rem; border-radius: 10px;
+      text-align: center; transition: transform 0.3s; cursor: pointer;
+    }
+    .song:hover { transform: translateY(-5px); }
+    .song img {
+      width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
+      border-radius: 6px; margin-bottom: 1rem;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .song:hover img { transform: scale(1.05); opacity: 0.9; }
+    .song h4 { font-size: 1.2rem; color: #ffcc66; margin-bottom: 0.5rem; }
+    .song h4:hover { color: #ffaa33; }
+
+    footer { padding: 2rem; background: #000; text-align: center; color: #666; margin-top: 3rem; }
+
+    .dropdown { position: relative; display: inline-block; }
+    .dropdown-content {
+      display: none; position: absolute; top: 100%; right: 0;
+      background: #222; padding: 0.5rem 0; border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3); min-width: 180px; z-index: 1000;
+    }
+    .dropdown-content a {
+      display: block; padding: 0.5rem 1rem; color: #ddd; text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .dropdown-content a:hover { background: #333; color: #ff6600; }
+    .dropdown:hover .dropdown-content { display: block; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; top: 0; right: -400px; width: 400px; height: 100%;
+      background: #111; box-shadow: -3px 0 10px rgba(0,0,0,0.5);
+      padding: 2rem; transition: right 0.4s ease;
+      z-index: 2000; overflow-y: auto;
+    }
+    .sidebar.active { right: 0; }
+    .sidebar img { width: 100%; border-radius: 8px; margin-bottom: 1rem; }
+    .sidebar h3 a { color: #ffcc66; text-decoration: none; }
+    .sidebar h3 a:hover { color: #ffaa33; text-decoration: underline; }
+    .sidebar pre {
+      white-space: pre-wrap; color: #ddd; font-size: 1rem; line-height: 1.5;
+    }
+    .close-btn {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer;
+    }
+
+    /* Floating Player */
+    .music-player {
+      position: fixed; bottom: 25px; left: 25px;
+      display: flex; align-items: center; gap: 15px;
+      background: rgba(25,25,25,0.95); border: 1px solid #ff8800;
+      border-radius: 50px; padding: 10px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 2001;
+      backdrop-filter: blur(6px); transition: all 0.3s ease;
+    }
+    .music-player img {
+      width: 45px; height: 45px; border-radius: 50%; object-fit: cover;
+      border: 2px solid #ffcc66;
+    }
+    .music-player button {
+      background: none; border: none; color: #ffcc66;
+      font-size: 1.5rem; cursor: pointer; transition: color 0.3s; display: none;
+    }
+    .music-player button:hover { color: #ffaa33; }
+    .music-player .info {
+      display: flex; flex-direction: column; max-width: 180px;
+    }
+    .music-player .info span { font-size: 0.9rem; color: #fff; line-height: 1.1; }
+    .progress-bar {
+      width: 100%; height: 6px; background: #333;
+      border-radius: 3px; overflow: hidden; margin-top: 6px;
+      cursor: pointer; display: none;
+    }
+    .progress { height: 6px; background: linear-gradient(90deg,#ff8800,#ffaa00); width: 0%; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Lee Family Press</h1>
+  <nav>
+    <a href="https://leefamilypress.com/index.html">Home</a>
+    <a href="https://leefamilypress.com/works.html">Works</a>
+    <a href="https://leefamilypress.com/contact.html">Contact</a>
+    <div class="dropdown">
+      <a href="#">Authors ▾</a>
+      <div class="dropdown-content">
+        <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
+        <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="section">
+  <h2>K-Story Songs</h2>
+  <p class="description">
+    The stories in our book (<a style="color:white!important;" href="https://leefamilypress.com/works/k-story-book-1.html">K-Story: History, Legends & Songs of Korea</a>) were never meant to rest on the page alone—they were made to be heard.  
+    Here, Korea’s oldest songs find new life through modern voices and melodies that echo across time.
+  </p>
+
+  <div class="works-grid">
+    <div class="song" onclick="openSidebar('river')">
+      <img src="https://leefamilypress.com/lib/pictures/do-not-cross-bg.jpeg">
+      <h4>Do Not Cross the River (공무도하가)</h4>
+    </div>
+    <div class="song" onclick="openSidebar('turtle')">
+      <img src="https://leefamilypress.com/lib/pictures/turtle-song-bg.jpeg">
+      <h4>Turtle, O Turtle! (구지가)</h4>
+    </div>
+    <div class="song" onclick="openSidebar('moonlight')">
+      <img src="https://leefamilypress.com/lib/pictures/moonlight-bg.jpeg">
+      <h4>The Song of the Moonlight Road (정읍사)</h4>
+    </div>
+    <div class="song" onclick="openSidebar('root')">
+      <img src="https://leefamilypress.com/lib/pictures/root-bg.jpeg">
+      <h4>The Song of the Ginseng Root (인삼찬)</h4>
+    </div>
+    <div class="song" onclick="openSidebar('oriole')">
+      <img src="https://leefamilypress.com/lib/pictures/bird-bg.jpeg">
+      <h4>The Song of the Oriole (황조가)</h4>
+    </div>
+  </div>
+</section>
+
+<footer><p>© 2025 Lee Family Press. All Rights Reserved.</p></footer>
+
+<div id="musicSidebar" class="sidebar">
+  <button class="close-btn" onclick="closeSidebar()">×</button>
+  <img id="songImage" src="">
+  <h3><a id="songTitleLink" href="#" target="_blank"></a></h3>
+  <pre id="songLyrics"></pre>
+</div>
+
+<div id="musicPlayer" class="music-player">
+  <img id="playerImage" src="https://leefamilypress.com/lib/pictures/do-not-cross-bg.jpeg">
+  <div class="info">
+    <span id="playerTitle">Not Playing</span>
+    <div class="progress-bar" id="progressBar"><div class="progress" id="progress"></div></div>
+  </div>
+  <button id="playPauseBtn">⏸</button>
+</div>
+
+<script>
+const songs = {
+  river: {
+    title: "Do Not Cross the River (공무도하가)",
+    page: "https://leefamilypress.com/do-not-cross-the-river.html",
+    image: "https://leefamilypress.com/lib/pictures/do-not-cross-bg.jpeg",
+    audio: "https://leefamilypress.com/lib/music/do-not-cross-the-river.mp3",
+    lyrics: `
+        
+Original Lyrics
+
+Do not cross the river,  
+Please, my love, please stay.  
+(公無渡河)  
+But you would not listen,  
+And drifted far away.  
+(公竟渡河)  
+Now you are gone—  
+Lost beneath the stream.  
+(墮河而死)  
+My joy has vanished;  
+Alas, what shall I do?  
+(當奈公何)
+      
+
+        
+New Lyrics
+
+Do not cross the river,  
+Please, my love, please stay.  
+The wind was cold and bitter,  
+Yet you walked away.  
+
+I called your name, but silence fell,  
+The water took you in its spell.  
+My hands reached out, but only air,  
+And now you’re gone—forever, nowhere.  
+
+Do not cross the river,  
+Please, my love, please stay.  
+But you would not listen,  
+And drifted far away.  
+Now you are gone—  
+Lost beneath the stream.  
+My joy has vanished;  
+Alas, what shall I do?  
+
+Shadows on the water,  
+Echoes on the shore.  
+Every step I wander,  
+I can’t find you anymore.  
+
+Your laughter fades like twilight’s song,  
+The night feels empty, dark, and long.  
+If I could turn the river’s tide,  
+I’d hold you close, back by my side.  
+
+Do not cross the river,  
+Please, my love, please stay.  
+But you would not listen,  
+And drifted far away.  
+Now you are gone—  
+Lost beneath the stream.  
+My joy has vanished;  
+Alas, what shall I do?  
+
+If love could build a bridge of light,  
+I’d walk across, I’d hold you tight.  
+But rivers flow, and time won’t bend,  
+I lost you once, I lose again.  
+
+Do not cross the river,  
+Please, my love, please stay.  
+But you would not listen,  
+And drifted far away.  
+Now you are gone—  
+Lost beneath the stream.  
+My joy has vanished;  
+Alas, what shall I do?  
+
+Do not cross the river…  
+Alas, what shall I do?`
+  },
+  turtle: {
+    title: "Turtle, O Turtle! (구지가)",
+    page: "https://leefamilypress.com/turtle.html",
+    image: "https://leefamilypress.com/lib/pictures/turtle-song-bg.jpeg",
+    audio: "https://leefamilypress.com/lib/music/turtle-song.mp3",
+    lyrics: `Original Chant
+
+Turtle, O Turtle!  
+(龜何龜何)
+Show us your head!  
+(首其現也)
+If you will not show it,  
+(若不現也)
+We will burn you,  
+We will roast you,  
+We will eat you!
+(燔灼而喫也)
+      
+
+        
+New Lyrics
+
+Turtle, O Turtle!  
+Show us your head!  
+If you will not show it,  
+We will burn you,  
+We will roast you,  
+We will eat you!  
+
+Knock on the shell—will you answer back?  
+Knock-knock! Knock-knock!  
+
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
+
+River runs steady, sky like a bell,  
+Voices together calling the shell.  
+Do not be afraid—step into the sun,  
+When we keep the rhythm, many hearts are one.  
+
+Send us the one who will unite us!  
+Give us the ruler who will guide us!  
+Turtle, O Turtle, we will keep you safe.  
+Show us your head—come join our pace.  
+
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
+
+Show us, show us—Turtle hear our cry,  
+Let the daylight shine!  
+Show us, show us—Turtle hear our cry,  
+We will walk the line!  
+
+Show us, show us—Turtle hear our cry,  
+Voices loud and strong!  
+Show us, show us—Turtle hear our cry,  
+We all sing along!  
+
+Show us, show us—Turtle hear our cry,  
+Till the turtle comes!  
+Show us, show us—Turtle hear our cry,  
+We will all be one!  
+
+BUM — BUM — BUM … silence`
+  },
+  moonlight: {
+    title: "The Song of the Moonlight Road (정읍사)",
+    page: "https://leefamilypress.com/moonlight.html",
+    image: "https://leefamilypress.com/lib/pictures/moonlight-bg.jpeg",
+    audio: "https://leefamilypress.com/lib/music/moonlight.mp3",
+    lyrics: `Old Lyrics (Jeongeupsa)
+
+O moon, climb high into the night,  
+Shine your silver light afar—  
+(ᄃᆞᆯ하 노피곰 도ᄃᆞ샤)
+Shine upon the roads he travels,  
+Guide him safely home to me.  
+(어긔야 머리곰 비취오시라)
+Ah, my heart—how it trembles!  
+(어긔야 어강됴리 아으 다롱디리)
+
+Is he still lingering in the marketplace?  
+Tell me, moon, where his footsteps go.  
+(져재 녀러신고요)
+Watch that he not stumble, not falter,  
+Nor sink into the dark and troubled mire.  
+(어긔야 즌ᄃᆡ를 드ᄃᆡ욜셰라)
+Ah, my heart—how it trembles!  
+(어긔야 어강됴리)
+
+All the goods he carries, let them be—  
+Let him leave them, let them fall aside.  
+(어느이다 노코시라)
+Only haste, only return, my love—  
+Before his heart grows weary, before his flame burns dim.  
+(어긔야 내 가논ᄃᆡ 점그ᄅᆞᆯ셰라)
+Ah, my heart—how it trembles!
+(어긔야 어강됴리 아으 다롱디리)
+      
+
+        
+New Lyrics
+
+Moonlight light, climb the sky,  
+Shine upon the road so high.  
+Guide his feet and guard his way,  
+Bring him safely home today.  
+
+Moonlight light… climb the sky…  
+Moonlight light… guard his way…  
+
+Moonlight light, my heart is weak,  
+Moonlight light, the one I seek.  
+Do not let him stumble, fall,  
+Guide him home through shadows all.  
+
+Moonlight light—ah, ah—  
+Moonlight light—ah, ah—  
+Guide him back, guide him back,  
+Guide him home to me.  
+
+If his hands grow tired and sore,  
+Moonlight light, protect him more.  
+If his heart grows faint with fear,  
+Moonlight light, draw him near.  
+
+Moonlight light… protect him more…  
+Moonlight light… draw him near…  
+
+Goods may scatter, gold may fade,  
+None of it counts, no price is paid.  
+Let the burdens fall aside,  
+Only love must be my guide.  
+
+Moonlight light, so pale, so near,  
+Take away my trembling fear.  
+Tell me where his footsteps go,  
+Bring him safe from night’s shadow.  
+
+Moonlight light—ah, ah—  
+Moonlight light—ah, ah—  
+Guide him back, guide him back,  
+Guide him home to me.  
+
+Moonlight light, across the sea,  
+Shine the path and let him see.  
+If the waters surge and rise,  
+Keep him safe beneath your eyes.  
+
+Moonlight light… across the sea…  
+Moonlight light… beneath your eyes…  
+
+Ah, my heart—how it trembles!  
+Ah, my heart—how it trembles!  
+Ah, my heart—how it trembles!  
+
+Moonlight light! Moonlight light!  
+Guide him—home to me!`
+  },
+  root: {
+    title: "The Song of the Ginseng Root (인삼찬)",
+    page: "https://leefamilypress.com/root.html",
+    image: "https://leefamilypress.com/lib/pictures/root-bg.jpeg",
+    audio: "https://leefamilypress.com/lib/music/root.mp3",
+    lyrics: `Original Poem
+
+Three forks, five leaves, 
+(三椏五葉)
+Turning from sun to shade.  
+(背陽向陰)
+If you wish to seek me,  
+(欲來求我)
+Look beneath the jujube tree.
+(假樹相尋)
+      
+
+        
+New Lyrics
+
+Three forks, five leaves,
+Turning from sun to shade.
+If you wish to seek me,
+Look beneath the jujube tree.
+
+Fog drifts low through silent pines,
+Foxes stir where dawnlight shines.
+Roots entwine where rivers start,
+Whispering life from the mountain’s heart.
+
+Three forks, five leaves,
+Turning from sun to shade.
+If you wish to seek me,
+Look beneath the jujube tree.
+
+Root of the mountain, child of stone,
+Drinking mist where no man’s gone.
+Hidden deep where tigers tread,
+Dreaming under pine-tree bed.
+
+Night descends with silver hue,
+Owls call out and fade from view.
+Still I sleep through storm and frost,
+In silence rich, yet never lost.
+
+Three forks, five leaves,
+Turning from sun to shade.
+If you wish to seek me,
+Look beneath the jujube tree.
+
+Rain on rock, and snow on moss,
+Years pass slow, no moment lost.
+Hands of healers find my face,
+Lift me softly from my place.
+
+Steamed in pots, dried in sun,
+Gift of earth to everyone.
+Carried far by boat and steed,
+For kings who thirst, for hearts in need.
+
+Three forks, five leaves,
+Turning from sun to shade.
+If you wish to seek me,
+Look beneath the jujube tree.
+
+Sailors hum as sails unfold,
+River turns its threads of gold.
+Monks recite beneath the pine,
+Blessing each root as a sacred sign.
+
+Markets gleam with distant lands,
+Ink and scrolls in merchants’ hands.
+Songs of ginseng cross the plain,
+Echoes carried home again.
+
+Three forks, five leaves,
+Turning from sun to shade.
+If you wish to seek me,
+Look beneath the jujube tree.
+
+Silk for roots, gold for trade,
+Voices ring through hill and glade.
+Banners flutter, horses neigh,
+Rivers sing along the way.
+
+From mountain heart our fortune flows,
+From forest depths our courage grows.
+Once we bled, now we stand tall,
+Ginseng’s power runs through all.
+
+Three forks, five leaves,
+Turning from sun to shade.
+If you wish to seek me,
+Look beneath the jujube tree.
+
+Hammers ring and towers climb,
+Bells of iron mark the time.
+Through each soul the root still gleams,
+Binding earth to ancient dreams.
+
+Three forks, five leaves,
+Turning from sun to shade.
+If you wish to seek me,
+Look beneath the jujube tree.
+
+Though kingdoms fall and rivers turn,
+Still in the soil my heart will burn.
+Three forks, five leaves,
+Turning from sun to shade.
+If you wish to seek me,
+Look beneath the jujube tree.`
+  },
+  oriole: {
+    title: "The Song of the Oriole (황조가)",
+    page: "https://leefamilypress.com/oriole.html",
+    image: "https://leefamilypress.com/lib/pictures/bird-bg.jpeg",
+    audio: "https://leefamilypress.com/lib/music/bird.mp3",
+    lyrics: `Original Song
+
+Two birds fly side by side, 
+(翩翩黃鳥)
+But I am left alone.  
+(雌雄相依)
+Where is the one I love?  
+(念我之獨)
+My heart longs and longs again.
+(誰其與歸)
+      
+
+        
+New Lyrics
+
+Two birds fly side by side,
+But I am left alone.
+Where is the one I love?
+My heart longs and longs again.
+
+I watched you leave, standing on the fortress stone,
+A story of love that the kingdom has known.
+They see the King, the great warrior, the man of the wars,
+They don't see the hole ripped right through my core.
+Every scroll, every banner, every jewel feels cold,
+My future is broken, my history untold.
+
+Two birds fly side by side,
+But I am left alone.
+Where is the one I love?
+My heart longs and longs again.
+
+Two birds fly side by side,
+But I am left alone.
+Where is the one I love?
+My heart longs and longs again.
+
+Two birds fly side by side,
+But I am left alone.
+Where is the one I love?
+My heart longs and longs again.
+
+The lights of the capital city still burn bright,
+But the halls are empty now, drowning in night.
+I hear a faint whisper carried on the line,
+A memory of your smile, that was once only mine.
+I trace your name in the dust of the windowpane,
+Knowing you'll never feel the warmth of my rain.
+
+Two birds fly side by side,
+But I am left alone.
+Where is the one I love?
+My heart longs and longs again.
+
+Fly high, my love, go where your heart demands,
+I search the ground, but hold only sand.
+I should hate the mountain, hate the crown, hate the throne,
+But I only hate the feeling of standing alone.
+
+Two orioles in morning sun...
+Their harmony is known...
+But I am left alone...
+My heart longs and longs again...`
+  }
+};
+
+const audio = new Audio();
+const player = document.getElementById('musicPlayer');
+const playBtn = document.getElementById('playPauseBtn');
+const progress = document.getElementById('progress');
+const progressBar = document.getElementById('progressBar');
+const playerTitle = document.getElementById('playerTitle');
+const playerImage = document.getElementById('playerImage');
+
+function openSidebar(id) {
+  const s = songs[id];
+  document.getElementById('songTitleLink').textContent = s.title;
+  document.getElementById('songTitleLink').href = s.page;
+  document.getElementById('songImage').src = s.image;
+  document.getElementById('songLyrics').textContent = s.lyrics;
+
+  audio.src = s.audio;
+  audio.play();
+
+  playerImage.src = s.image;
+  playerTitle.textContent = s.title;
+  progressBar.style.display = "block";
+  playBtn.style.display = "block";
+  playBtn.textContent = "⏸";
+
+  document.getElementById('musicSidebar').classList.add('active');
+}
+
+function closeSidebar() {
+  document.getElementById('musicSidebar').classList.remove('active');
+}
+
+playBtn.addEventListener('click', () => {
+  if (audio.paused) { audio.play(); playBtn.textContent = "⏸"; }
+  else { audio.pause(); playBtn.textContent = "▶️"; }
+});
+
+audio.addEventListener('timeupdate', () => {
+  progress.style.width = (audio.currentTime / audio.duration * 100) + "%";
+});
+
+progressBar.addEventListener('click', e => {
+  const rect = progressBar.getBoundingClientRect();
+  const ratio = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = ratio * audio.duration;
+});
+
+audio.addEventListener('ended', () => {
+  progress.style.width = "0%";
+  progressBar.style.display = "none";
+  playBtn.style.display = "none";
+  playerTitle.textContent = "Not Playing";
+});
+</script>
+
+</body>
+</html>
