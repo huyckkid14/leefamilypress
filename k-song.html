@@ -191,6 +191,7 @@
 </div>
 
 <script>
+let startSong = { played: true, name: '' }
 const songs = {
   river: {
     title: "Do Not Cross the River (공무도하가)",
@@ -271,7 +272,12 @@ My joy has vanished;
 Alas, what shall I do?  
 
 Do not cross the river…  
-Alas, what shall I do?`
+Alas, what shall I do?
+
+
+
+
+`
   },
   turtle: {
     title: "Turtle, O Turtle! (구지가)",
@@ -340,7 +346,12 @@ Till the turtle comes!
 Show us, show us—Turtle hear our cry,  
 We will all be one!  
 
-BUM — BUM — BUM … silence`
+BUM — BUM — BUM … silence
+
+
+
+
+`
   },
   moonlight: {
     title: "The Song of the Moonlight Road (정읍사)",
@@ -434,7 +445,12 @@ Ah, my heart—how it trembles!
 Ah, my heart—how it trembles!  
 
 Moonlight light! Moonlight light!  
-Guide him—home to me!`
+Guide him—home to me!
+
+
+
+
+`
   },
   root: {
     title: "The Song of the Ginseng Root (인삼찬)",
@@ -546,7 +562,12 @@ Still in the soil my heart will burn.
 Three forks, five leaves,
 Turning from sun to shade.
 If you wish to seek me,
-Look beneath the jujube tree.`
+Look beneath the jujube tree.
+
+
+
+
+`
   },
   oriole: {
     title: "The Song of the Oriole (황조가)",
@@ -615,7 +636,12 @@ But I only hate the feeling of standing alone.
 Two orioles in morning sun...
 Their harmony is known...
 But I am left alone...
-My heart longs and longs again...`
+My heart longs and longs again...
+
+
+
+
+`
   }
 };
 
@@ -634,9 +660,9 @@ function openSidebar(id) {
   document.getElementById('songImage').src = s.image;
   document.getElementById('songLyrics').textContent = s.lyrics;
 
-  audio.src = s.audio;
-  audio.play();
 
+
+  
   playerImage.src = s.image;
   playerTitle.textContent = s.title;
   progressBar.style.display = "block";
@@ -644,6 +670,12 @@ function openSidebar(id) {
   playBtn.textContent = "⏸";
 
   document.getElementById('musicSidebar').classList.add('active');
+  
+  if (startSong.played && startSong.title === s.title) return;
+  
+  startSong = { played: true, title: s.title };
+  audio.src = s.audio;
+  audio.play();
 }
 
 function closeSidebar() {
