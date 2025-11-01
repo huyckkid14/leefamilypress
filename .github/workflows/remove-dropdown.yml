@@ -112,13 +112,20 @@ jobs:
             git commit -m "🧹 Auto-clean duplicate dropdown styles after header replacement"
             git push
           fi
-      # 5️⃣ Remove excessive blank lines and hidden whitespace (robust + timeout + safe continue)
+      # 5️⃣ Remove excessive blank lines (>4) and hidden characters
       - name: Remove excessive blank lines (>4) and hidden characters
         run: |
           echo "🧽 Removing long blank line streaks and hidden whitespace..."
           set +e  # continue even if a file fails or times out
 
           find . -type f -name "*.html" -print0 | while IFS= read -r -d '' FILE; do
+            # --- Skip specific file(s) ---
+            BASENAME=$(basename "$FILE")
+            if [ "$BASENAME" = "k-song.html" ]; then
+              echo "🚫 Skipping: $FILE (excluded from cleanup)"
+              continue
+            fi
+
             echo "🔧 Attempting to edit: $FILE"
             SIZE=$(stat -c%s "$FILE" || echo "unknown")
             echo "   └─ Size: ${SIZE} bytes"
@@ -140,11 +147,11 @@ jobs:
               # Convert non-breaking spaces to normal space
               s/\x{00A0}/ /g;
 
-              # Remove empty HTML comments that appear as "blank" lines (e.g. <!---->, <!--   -->)
+              # Remove empty HTML comments that appear as "blank" lines
               s/^\s*<!--\s*-->\s*\n?//gm;
               s/^\s*<!-+>\s*\n?//gm;
 
-              # Remove lines that contain only spaces or tabs (NBSPs already converted)
+              # Remove lines that contain only spaces or tabs
               s/^[ \t]*\n/\n/gm;
 
               # Collapse any long run of newlines (5 or more) into a single newline
@@ -152,7 +159,6 @@ jobs:
             ' "$FILE" > "$FILE.tmp"
             EXITCODE=$?
 
-            # Handle timeout (exit code 124)
             if [ $EXITCODE -eq 124 ]; then
               echo "⚠️  File $FILE canceled — took more than 10 seconds (timeout). Skipped."
               rm -f "$FILE.tmp"
@@ -163,7 +169,6 @@ jobs:
               continue
             fi
 
-            # Normal completion — check if file changed
             if ! cmp -s "$FILE" "$FILE.tmp"; then
               mv "$FILE.tmp" "$FILE"
               echo "✅ Edited: $FILE"
@@ -174,6 +179,7 @@ jobs:
           done
 
           echo "✅ Blank line & hidden whitespace cleanup complete."
+
 
 
 
