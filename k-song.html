@@ -273,6 +273,10 @@ Alas, what shall I do?
 
 Do not cross the river…  
 Alas, what shall I do?
+
+
+
+
 `
   },
   turtle: {
@@ -343,6 +347,10 @@ Show us, show us—Turtle hear our cry,
 We will all be one!  
 
 BUM — BUM — BUM … silence
+
+
+
+
 `
   },
   moonlight: {
@@ -438,6 +446,10 @@ Ah, my heart—how it trembles!
 
 Moonlight light! Moonlight light!  
 Guide him—home to me!
+
+
+
+
 `
   },
   root: {
@@ -551,6 +563,10 @@ Three forks, five leaves,
 Turning from sun to shade.
 If you wish to seek me,
 Look beneath the jujube tree.
+
+
+
+
 `
   },
   oriole: {
@@ -621,6 +637,10 @@ Two orioles in morning sun...
 Their harmony is known...
 But I am left alone...
 My heart longs and longs again...
+
+
+
+
 `
   }
 };
@@ -639,6 +659,10 @@ function openSidebar(id) {
   document.getElementById('songTitleLink').href = s.page;
   document.getElementById('songImage').src = s.image;
   document.getElementById('songLyrics').textContent = s.lyrics;
+
+
+
+  
   playerImage.src = s.image;
   playerTitle.textContent = s.title;
   progressBar.style.display = "block";
@@ -646,9 +670,9 @@ function openSidebar(id) {
   playBtn.textContent = "⏸";
 
   document.getElementById('musicSidebar').classList.add('active');
-
+  
   if (startSong.played && startSong.title === s.title) return;
-
+  
   startSong = { played: true, title: s.title };
   audio.src = s.audio;
   audio.play();
