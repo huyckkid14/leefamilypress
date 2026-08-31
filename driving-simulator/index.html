@@ -24,10 +24,90 @@ main{position:relative;min-height:0;overflow:hidden}#map{position:absolute;inset
 <body>
 <div id="app">
 <header>
-  <div class="brand"><div class="logo">D</div><div><div class="title">Aerial Drive</div><div class="tag">2D satellite simulator</div></div></div>
-  <form class="search" id="searchForm"><input id="searchInput" autocomplete="off" placeholder="Search city or address…"><button aria-label="Search">⌕</button></form>
-  <button class="reset" id="resetBtn" title="Reset vehicle">↺</button>
+  <h1>Lee Family Press</h1>
+  <nav>
+    <a href="https://leefamilypress.com/index.html">Home</a>
+    <a href="https://leefamilypress.com/works.html">Works</a>
+    <a href="https://leefamilypress.com/contact.html">Contact</a>
+    <div class="dropdown">
+      <a href="#">Authors ▾</a>
+      <div class="dropdown-content">
+        <a href="https://leefamilypress.com/authors/jun-hee-lee.html">Jun Hee Lee</a>
+        <a href="https://leefamilypress.com/authors/jaewon-lee.html">Jaewon Lee</a>
+      </div>
+    </div>
+  </nav>
 </header>
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
+
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background: #222;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  min-width: 180px;
+  z-index: 1000;
+}
+.dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.dropdown-content a:hover {
+  background: #333;
+  color: #ff6600;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+
 <main id="game">
   <div id="map"></div>
   <div class="mode glass"><button data-mode="street">Map</button><button data-mode="satellite" class="active">Satellite</button><button data-mode="hybrid">Hybrid</button></div>
